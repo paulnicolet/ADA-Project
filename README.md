@@ -48,7 +48,7 @@ Besides, Big Data processing is possible with the hardware resources provided by
 
 ### Challenge : Big Data
 
-- This project will be challenging given the amount of data we have to process. Big Data is a new field that we have never experimented before, so the challenge will be to discover, learn, practice and apply Big Data solutions for the project. In particular, we are considering looking at [Spark](http://spark.apache.org), which has been recommanded at the lectures at the very beginning of the semester.
+- This project will be challenging given the amount of data we have to process. Big Data is a new field that we have never experimented before, so the challenge will be to discover, learn, practice and apply Big Data solutions for the project. In particular, we are considering looking at [Spark](http://spark.apache.org), which has been recommended at the lectures at the very beginning of the semester.
 - Making sense of this data is another challenge. Extracting relevant migration patterns,
 as well as quantifying the influence of new infrastructure represent a conceptual model which needs to
 be reflected.
