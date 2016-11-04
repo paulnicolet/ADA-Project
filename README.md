@@ -25,14 +25,14 @@ Besides, Big Data processing is possible with the hardware resources provided by
 ### Deliverables
 
 #### First deliverable
-**Deadline** : checkpoint.
+*Deadline* : checkpoint.
 
-**Description** : Mid-project report to analyse and explain the findings of the first half of the project. This would contain some basic visualisation, and conclusions on the feasibility of the overall project.
+*Description* : Mid-project report to analyse and explain the findings of the first half of the project. This would contain some basic visualisation, and conclusions on the feasibility of the overall project.
 
 #### Final deliverable
-**Deadline** : end of the project.
+*Deadline* : end of the project.
 
-**Description** : The final deliverable of the project will consists in clear visualisations of mobility flows in Switzerland (assuming the data was sufficiently relevant for our purpose). The form is not defined yet, but the goal is to provide a visualisation as advanced as possible in order to show the mains movements in the country.
+*Description* : The final deliverable of the project will consists in clear visualisations of mobility flows in Switzerland (assuming the data was sufficiently relevant for our purpose). The form is not defined yet, but the goal is to provide a visualisation as advanced as possible in order to show the mains movements in the country.
 
 ### Timeplan
 
