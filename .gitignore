@@ -1,6 +1,9 @@
-# Python related
+# Python
 *.pyc
 
-# Data related
+# Data
 *.tsv
 *.txt
+
+# iPython
+.ipynb_checkpoints
