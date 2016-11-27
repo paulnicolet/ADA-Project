@@ -4,6 +4,7 @@
 # Data
 *.tsv
 *.txt
+*.csv
 
 # iPython
 .ipynb_checkpoints
