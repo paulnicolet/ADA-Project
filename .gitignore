@@ -1,0 +1,6 @@
+# Python related
+*.pyc
+
+# Data related
+*.tsv
+*.txt
