@@ -11,7 +11,8 @@ In order to visualize these flows in a clear way, we choose to create an interfa
 
 ![flows](assets/product_example.png)
 
-The visualization should convey the same ideas as the image above:
+The image above represents an idea of what the end product should look like. Of course, our map will be scaled so that only relevant areas are represented (Switzerland, and part of its neighboring coutries).
+The visualization should convey the same ideas:
 - The importance of the flow (shown by the thickness of the lines)
 - The nature of the flow (shown by the starting point and the color of the lines)
 
@@ -83,6 +84,15 @@ Look if tweet is along roads or train lines ? Look at [this](https://github.com/
 
 ### Across borders ?
 Try to simply find user that post regularly in and out CH ? To get a rough idea of how much are the borders crossed ?
+
+## Putting it all together
+*How to go from the tweets to the described end product?*
+
+1. Build list of tweets belonging to the same user, emmited in a certain time period (1 day for example).
+2. Filter out lists that can not be used for flow detection (lists with unique tweets, lists with tweets posted in the same location).
+3. We are left with relevant list of tweets. For every list, create a path consisting of the nodes where the tweets were posted.
+4. Filter out paths which are only used by a minority. This leaves us with the most important flows.
+5. Visualize those paths on a map.
 
 # Warning
 **It seems all of this relies on the fact that a lot of people (at least a good amount) tweet often enough ?**
