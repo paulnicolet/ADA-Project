@@ -1,6 +1,23 @@
 # Design
 This document presents a rough idea about the design we plan to implement.
 
+## End goal
+We start by describing the desired end product.
+
+The product of this study should represent flows in Switzerland. 
+Flows are very likely to vary depending on the date and time of the tweets, as well as various
+events, such as the opening of a new freeway... Thus, the representation of those flows should take all those factors into account.
+In order to visualize these flows in a clear way, we choose to create an interface with a dynamic representation of the flows. 
+
+![flows](assets/product_example.png)
+
+The visualization should convey the same ideas as the image above:
+- The importance of the flow (shown by the thickness of the lines)
+- The nature of the flow (shown by the starting point and the color of the lines)
+
+In addition, additional tools should enable users to visualize flows at different point in time (date, time, special event).
+
+
 ## Thinking about Flows 
 
 **People flow**: refers to numerous people moving around buildings, around cities or across borders. 
