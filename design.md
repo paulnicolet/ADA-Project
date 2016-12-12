@@ -22,7 +22,7 @@ The visualization should convey the same ideas:
 - The importance of the flow (shown by the thickness of the lines)
 - The nature of the flow (shown by the starting point and the color of the lines)
 
-In addition, additional tools should enable users to visualize flows at different point in time (date, time, special event).
+In addition, additional tools should enable users to visualize flows at different point in time (date, time, special event). The time scale would depend on the data, which is not necessarly accurate enough to be able to see short terms movements. 
 
 
 ## Thinking about Flows 
@@ -44,8 +44,6 @@ If we consider a flow as a being movement from a node to another, we need to dec
 
 It makes sense here to considere cities as nodes, and so detect movement between cities. Of course we still need to decide what cities are large enough to be able to add more information in our analysis.
 
-It might also make sense to consider larger geographical zones as nodes in order to detect less precise flows. This might be significant in our analysis to evaluate the amount of people crossing borders for example, but since people don't necessarly cross the border to work in the same place, we should maybe not only consider cities for these particular cases.
-
 ### Edges
 There are two ways to think of links between nodes : 
 
@@ -63,12 +61,11 @@ Now we have to keep in mind that our analysis is based on tweets, which needs ei
 ### Detection strategy 
 *When can we say that someone is moving in a flow ?*
 
-
+- Someone is moving if we can find tweets in different locations, with a time relation.
 - A flow should not be determined by only one person. Assuming the path of one person at a certain time, we need to see whether several people use the same path.
-- Additionaly, since flows depend on the time and date at which the map is visualized, only paths that occur within a certain period should be taken into account when building a flow. 
-- Specifically:
-	- Paths should be built exclusively with tweets posted during the same day
-	- The direction of the path  is determined by the path going from the earliest tweet to the ones coming after
+- There are two main time relations between tweets of the same person, the strategy can be adapted during the process :
+	- If a lot of tweets are actually posted the same day, there is an easy way to detect flows in a small time scale, and an easy way to predict the direction of the flow, using the earliest tweet as starting point (assuming that a majority of people start moving in the morning).
+	- If tweets are actually spread over days, we can suppose there is a flow if the location is changing, but it is not easy to predict the direction.
 
 *When can we say that a flow is significant ?*
 
@@ -78,31 +75,31 @@ Now we have to keep in mind that our analysis is based on tweets, which needs ei
 ### Detecting cities
 *Given a point (longitude, latitude), how can we find the corresponding node ?*
 
+- A tweet is associated to a node by using a **nearest neighbor** method.
+	- See [geonames downloads](http://download.geonames.org/export/dump/) for coordinates of main locations in Switzerland.
 - A node is determined by its center, and includes all points situated within its diameter. 
-- The diameter of a node depends on the surface on which the city is spread.
+- The diameter of a node ideally depends on the surface on which the city is spread. It might not be easy to find the actual surface of cities, in which case we could simplify our model to base the surface on the population.
 - Consequently, certain points (absence of nearby city) will not be considered.
-
-* See [Geonames](http://download.geonames.org/export/dump/). There is a file for CH, linking each city to its coordinates. Finding **nearest neighbor** in this file ?
 
 *Which cities to consider ? Which population ?*
 
 - All cities that contain a number of inhabitants equal or greater than the minimum number of paths required to create a flow (as described above) should be taken into consideration.
 
 ### Detecting paths
-Per person, find tweets that are not close to a city ? What is close ?
+The analysis could potentially take into account the exact path of flows. This would be useful detect for example which train lines or main roads are used in practice. This is possible only if we suppose that people post tweets while traveling. This assumption doesn't really hold when traveling by car, but could actually be acceptable in the context of trains.
 
-If some tweets found, we can open a sub-flow of A -> B. 
 
-Look if tweet is along roads or train lines ? Look at [this](https://github.com/vasile/transit-map/blob/master/api/geojson/edges.geojson).
+[Here](https://github.com/vasile/transit-map/blob/master/api/geojson/edges.geojson) is some data potentially useful.
 
-### Across borders ?
-*Try to simply find user that post regularly in and out CH ? To get a rough idea of how much the borders are crossed ?*
+**But**, given the potential complexity this task task could bring up, and the weakness of the assumptions, this part can be considered as an improvement of the basic flow detection.
 
-- The problem of finding outgoing or incoming flows should be treated in the same way. 
-- Consequently, we will need to build nodes for neighboring countries as well.
+### Across borders
+The problem of finding outgoing or incoming flows should be treated in the same way. Consequently, we will need to build nodes for neighboring countries as well.
 
 ## Putting it all together
 *How to go from the tweets to the described end product?*
+
+Here is a very high level view of the potential pipeline : 
 
 1. Build list of tweets belonging to the same user, emmited in a certain time period (1 day for example).
 2. Filter out lists that can not be used for flow detection (lists with unique tweets, lists with tweets posted in the same location).
