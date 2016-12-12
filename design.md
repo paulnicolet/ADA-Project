@@ -9,7 +9,13 @@ Flows are very likely to vary depending on the date and time of the tweets, as w
 events, such as the opening of a new freeway... Thus, the representation of those flows should take all those factors into account.
 In order to visualize these flows in a clear way, we choose to create an interface with a dynamic representation of the flows. 
 
+
+
+
 ![flows](assets/product_example.png)
+
+
+
 
 The image above represents an idea of what the end product should look like. Of course, our map will be scaled so that only relevant areas are represented (Switzerland, and part of its neighboring coutries).
 The visualization should convey the same ideas:
@@ -56,6 +62,10 @@ Now we have to keep in mind that our analysis is based on tweets, which needs ei
 ## Detecting Flows
 ### Detection strategy 
 *When can we say that someone is moving in a flow ?*
+
+** Potential idea:** 
+- A flow should not be determined by only one person. Assuming the path of one person at a certain time, we need to see whether several people use the same path.
+- Additionaly, since flows depend on the time and date at which the map is visualized, only paths that occur within a certain period should be taken into account when building a flow. 
 
 * Tweet in location A, in location B, how often ? Per day ? Per week ?  
 * Which direction ? Starting point is early tweet, if 2 tweets in the same day. Otherwise harder... Can we assume someone goes from the smallest to the biggest city between A and B ?
