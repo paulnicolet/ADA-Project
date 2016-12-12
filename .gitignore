@@ -5,6 +5,7 @@
 *.tsv
 *.txt
 *.csv
+*.log
 
 # iPython
 .ipynb_checkpoints
