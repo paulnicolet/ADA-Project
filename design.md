@@ -63,27 +63,30 @@ Now we have to keep in mind that our analysis is based on tweets, which needs ei
 ### Detection strategy 
 *When can we say that someone is moving in a flow ?*
 
-** Potential idea:** 
+
 - A flow should not be determined by only one person. Assuming the path of one person at a certain time, we need to see whether several people use the same path.
 - Additionaly, since flows depend on the time and date at which the map is visualized, only paths that occur within a certain period should be taken into account when building a flow. 
-
-* Tweet in location A, in location B, how often ? Per day ? Per week ?  
-* Which direction ? Starting point is early tweet, if 2 tweets in the same day. Otherwise harder... Can we assume someone goes from the smallest to the biggest city between A and B ?
+- Specifically:
+	- Paths should be built exclusively with tweets posted during the same day
+	- The direction of the path  is determined by the path going from the earliest tweet to the ones coming after
 
 *When can we say that a flow is significant ?*
 
-* Probably when a lot of people take it ?
-* Save starting date 
+- A flow is significant when it is used by a minimum number of people. 
+- The specific minimum should be determined by tests. A potential test would consist in visualizing the map with different minimums. Eligible minimum should yield maps which display great information, without being bloated.
 
 ### Detecting cities
 *Given a point (longitude, latitude), how can we find the corresponding node ?*
 
+- A node is determined by its center, and includes all points situated within its diameter. 
+- The diameter of a node depends on the surface on which the city is spread.
+- Consequently, certain points (absence of nearby city) will not be considered.
+
 * See [Geonames](http://download.geonames.org/export/dump/). There is a file for CH, linking each city to its coordinates. Finding **nearest neighbor** in this file ?
-* What is close enough to be considered in the city ?
 
 *Which cities to consider ? Which population ?*
 
-* Test with different parameters ?
+- All cities that contain a number of inhabitants equal or greater than the minimum number of paths required to create a flow (as described above) should be taken into consideration.
 
 ### Detecting paths
 Per person, find tweets that are not close to a city ? What is close ?
@@ -93,7 +96,10 @@ If some tweets found, we can open a sub-flow of A -> B.
 Look if tweet is along roads or train lines ? Look at [this](https://github.com/vasile/transit-map/blob/master/api/geojson/edges.geojson).
 
 ### Across borders ?
-Try to simply find user that post regularly in and out CH ? To get a rough idea of how much are the borders crossed ?
+*Try to simply find user that post regularly in and out CH ? To get a rough idea of how much the borders are crossed ?*
+
+- The problem of finding outgoing or incoming flows should be treated in the same way. 
+- Consequently, we will need to build nodes for neighboring countries as well.
 
 ## Putting it all together
 *How to go from the tweets to the described end product?*
