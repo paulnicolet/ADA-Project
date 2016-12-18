@@ -1,0 +1,21 @@
+1    id    bigint(20)        UNSIGNED    No    None
+2    userId    bigint(20)        UNSIGNED    No    None
+3    createdAt    timestamp            No    0000-00-00 00:00:00
+4    text    text    utf8_unicode_ci        No    None
+5    longitude    float            Yes    NULL
+6    latitude    float            Yes    NULL
+7    placeId    varchar(25)    utf8_general_ci        Yes    NULL
+8    inReplyTo    bigint(20)        UNSIGNED    Yes    NULL
+9    source    int(10)        UNSIGNED    No    None
+10    truncated    bit(1)            No    None
+11    placeLatitude    float            Yes    NULL
+12    placeLongitude    float            Yes    NULL
+13    sourceName    varchar(255)    utf8_general_ci        Yes    NULL
+14    sourceUrl    varchar(255)    utf8_general_ci        Yes    NULL
+15    userName    varchar(200)    utf8_general_ci        Yes    NULL
+16    screenName    varchar(200)    utf8_general_ci        Yes    NULL
+17    followersCount    int(10)        UNSIGNED    Yes    NULL
+18    friendsCount    int(10)        UNSIGNED    Yes    NULL
+19    statusesCount    int(10)        UNSIGNED    Yes    NULL
+20    userLocation    varchar(200)    utf8_general_ci        Yes    NULL
+
