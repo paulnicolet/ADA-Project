@@ -1,6 +1,19 @@
 # Applied Data Analysis Project
 ## Mobility patterns in Switzerland with Twitter
 
+### Goal
+The goal is to look for geographical people flows in Switzerland, from  a set of geolocalized tweets.
+
+### Dependencies
+* `pandas`
+* `haversine`
+* `pickle`
+
+### References
+* [GeoNames](http://www.geonames.org) for the Swiss geographical data.
+
+## Project proposal
+
 This project proposal aims to provide a high-level description of the project, by giving information about the data, feasability, risks, deliverables, timeplan and challenging parts.
 
 The approach taken is conceptual. The data or the possible solutions were not yet investigated, these are just very basic ideas of what seems to be possible.
@@ -39,11 +52,23 @@ Besides, Big Data processing is possible with the hardware resources provided by
 | Date | Task |
 |------|------|
 | November 6th | Project proposal |
-| November 6th - End of November | Getting familiar with data, choosing framworks and tools |
+| November 6th - End of November | Getting familiar with data, choosing frameworks and tools |
 | Beginning of December | First deliverable development |
 | Mid December (TBD) | Checkpoint |
 | Mid December | Review of timeplan |
 | Mid December - January | Final deliverable development |
+| End of January (TBD) | Mini-Symposium |
+
+### Reviewed Timeplan
+
+| Date | Task |
+|------|------|
+| November 6th | Project proposal |
+| November 6th - End of November | Getting familiar with data, choosing frameworks and tools |
+| December | Design and basic flow detection code|
+| End of December| Checkpoint |
+| January - Mid January | Final flow detection algorithms |
+| Mid January - End of January | Final deliverable development |
 | End of January (TBD) | Mini-Symposium |
 
 ### Challenge : Big Data
