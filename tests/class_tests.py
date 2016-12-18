@@ -5,8 +5,8 @@ from node import Node
 from flow import Flow
 
 def main():
-    node1 = Node('Source', (45, 15), 1000)
-    node2 = Node('Destination', (46, 16), 1000)
+    node1 = Node('Source', (45, 15), 1000, ':)')
+    node2 = Node('Destination', (46, 16), 1000, ':)')
     undir_flow = Flow(node1, node2)
     dir_flow = Flow(node1, node2, directed=True)
 

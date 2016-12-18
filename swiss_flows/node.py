@@ -6,15 +6,17 @@ class Node:
 
     Parameters:
         name name of the Node
-        point (latitude, longitude)
+        position (latitude, longitude)
         population population of the city
+        canton canton string code
     """
 
-    def __init__(self, name, point, population):
+    def __init__(self, name, position, population, canton):
         self.name = name
-        self.position = point
+        self.position = position
         self.population = population
         self.radius = 10
+        self.canton = canton
 
     def dist(self, other):
         """ Return the distance between two nodes in kilometers. """
@@ -25,6 +27,7 @@ class Node:
         pass
 
     def __str__(self):
-        return '[Node] {}, {}, radius = {}.'.format(self.name,
-                                                   self.position,
-                                                   self.radius)
+        return '[Node] {}, {}, {}, radius = {}.'.format(self.name,
+                                                        self.canton,
+                                                        self.position,
+                                                        self.radius)
