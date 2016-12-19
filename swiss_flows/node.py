@@ -18,18 +18,35 @@ class Node:
         self.name = name
         self.position = position
         self.population = population
-        self.radius = 10
+        self.radius = 15
         self.canton = canton
 
-    def dist(self, other):
-        """ Return the distance between two nodes in kilometers. """
-        return haversine(self.position, other.position)
+    @staticmethod
+    def locate_point(point, nodes):
+        """
+        Find the best corresponding node to the point in the given list.
 
-    def __str__(self):
-        return '[Node] {}, {}, {}, radius = {}.'.format(self.name,
-                                                        self.canton,
-                                                        self.position,
-                                                        self.radius)
+        Parameters:
+            point Point to evaluate.
+            nodes List of nodes.
+
+        Returns:
+            The best node in the list or None if not considered in a node.
+        """
+
+        best_dist = 10000
+        best_node = None
+
+        for node in nodes:
+            dist = haversine(point, node.position)
+
+            # Take the closest node, make sure the point is in the city circle
+            if dist < best_dist and dist < node.radius:
+                best_dist = dist
+                best_node = node
+
+        return best_node
+
 
     @staticmethod
     def generate_nodes(n_nodes=10):
@@ -41,6 +58,9 @@ class Node:
 
         Parameters:
             n_nodes Number of nodes to generate.
+
+        Returns:
+            list of nodes
         """
         filepath = '../data/nodes_{}.pkl'.format(n_nodes)
 
@@ -96,3 +116,13 @@ class Node:
             pickle.dump(nodes, file)
 
         return nodes
+
+    def dist(self, other):
+        """ Return the distance between two nodes in kilometers. """
+        return haversine(self.position, other.position)
+
+    def __str__(self):
+        return '[Node] {}, {}, {}, radius = {}'.format(self.name,
+                                                       self.canton,
+                                                       self.position,
+                                                       self.radius)
