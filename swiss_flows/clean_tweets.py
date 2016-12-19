@@ -4,7 +4,7 @@ import os
 import csv
 import sys
 
-def main(args):
+def clean_tweets(filename):
 
 	# Load the dirty tweets
 	# Taken from Slack: https://adaepfl.slack.com/archives/twitter/p1480527805000002
@@ -31,12 +31,8 @@ def main(args):
 	df['placeLatitude'] = df['placeLatitude'].apply(remove_t)
 
 	# Write in a file
-	name = args[1]
-	df.to_csv(name + '.csv')
+	df.to_csv(filename + '.csv')
 
 
 def remove_t(place_latitude):
-    	return place_latitude.replace('\t', '')	
-
-if __name__ == '__main__':
-    main(sys.argv)
+    	return place_latitude.replace('\t', '')
