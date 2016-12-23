@@ -27,4 +27,4 @@ def clean_tweets(filename):
 	df = df.dropna(subset=imp_col, how='any')
 
 	# Write in a file
-	df.to_csv(filename + '.csv')
+	df.to_csv(filename + '.csv', index=False)
