@@ -9,12 +9,11 @@ def clean_tweets(filename):
 	# Load the dirty tweets
 	# Taken from Slack: https://adaepfl.slack.com/archives/twitter/p1480527805000002
 	data_path = os.path.dirname('__file__') + '../data/twitter-swisscom/sample.tsv'
-	df = pd.read_csv(data_path, sep="\t",encoding='utf-8',  quoting=csv.QUOTE_NONE, header=None, na_values='\\N')
+	df = pd.read_csv(data_path, sep="\t",encoding='utf-8', escapechar='\\', quoting=csv.QUOTE_NONE, header=None, na_values='N')
 
 	# Load the schema
 	schema_path = os.path.dirname('__file__') + '../data/twitter-swisscom/schema.txt'
 	schema = pd.read_csv(schema_path, delim_whitespace=True, header=None)
-	schema.drop([9], inplace=True)
 
 	# Assign column names
 	df.columns = schema[1]
@@ -27,12 +26,5 @@ def clean_tweets(filename):
 	imp_col = ['userId', 'createdAt', 'placeLatitude', 'placeLatitude']
 	df = df.dropna(subset=imp_col, how='any')
 
-	# Correct format of palceLatitude column
-	df['placeLatitude'] = df['placeLatitude'].apply(remove_t)
-
 	# Write in a file
 	df.to_csv(filename + '.csv')
-
-
-def remove_t(place_latitude):
-    	return place_latitude.replace('\t', '')
