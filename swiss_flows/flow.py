@@ -27,3 +27,27 @@ class Flow:
                                                       self.src_time,
                                                       self.dst_time,
                                                       self.weight)
+
+    @staticmethod
+    def is_period_overlap(flow1, flow2):
+        """
+        The period of a flow is determined by the interval of time between
+        src_time and dst_time. This method determines whether the interval
+        of two flows overlap.
+
+        Parameters:
+            flow1 The first flow to consider
+            flow2 The second flow to consider
+
+        Returns:
+            boolean saying whether or not the time periods of the two flows overlap
+        """
+
+        f1start = flow1.src_time
+        f2start = flow2.src_time
+
+        f1end = flow1.dst_time
+        f2end = flow2.dst_time
+
+        return (f1start <= f2start <= f1end) or (f2start <= f1start <= f2end)
+
