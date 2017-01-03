@@ -32,6 +32,13 @@ class Flow:
         cond = (self.src == other.src) and (self.dst == other.dst) and (self.directed == other.directed)
         return isinstance(other, type(self)) and cond
 
+    @property
+    def symmetrical(self):
+        """
+        Return the symetrical flow
+        """
+        return Flow(src=self.dst, dst=self.src, directed=self.directed)
+
     @staticmethod
     def is_period_overlap(flow1, flow2):
         """
