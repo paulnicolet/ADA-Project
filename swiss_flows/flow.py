@@ -10,10 +10,11 @@ class Flow:
         directed True if the flow is directed
         weight importance of the flow
     """
-    
-    def __init__(self, src, dst, src_time, dst_time, directed=False):
+
+    def __init__(self, src, dst, src_time=None, dst_time=None, directed=False):
         self.src = src
         self.dst = dst
+        # TODO src_time, dst_time shouldnt be attributes as they will consider new flows for each tweets
         self.src_time = src_time
         self.dst_time = dst_time
         self.directed = directed
@@ -27,6 +28,9 @@ class Flow:
                                                       self.src_time,
                                                       self.dst_time,
                                                       self.weight)
+    def __eq__(self, other):
+        cond = (self.src == other.src) and (self.dst == other.dst) and (self.directed == other.directed)
+        return isinstance(other, type(self)) and cond
 
     @staticmethod
     def is_period_overlap(flow1, flow2):
@@ -50,4 +54,3 @@ class Flow:
         f2end = flow2.dst_time
 
         return (f1start <= f2start <= f1end) or (f2start <= f1start <= f2end)
-

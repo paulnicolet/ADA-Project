@@ -21,6 +21,10 @@ class Node:
         self.radius = 15
         self.canton = canton
 
+    def __eq__(self, other):
+        cond = (self.__dict__ == other.__dict__)
+        return isinstance(other, type(self)) and cond
+
     @staticmethod
     def locate_point(point, nodes):
         """
