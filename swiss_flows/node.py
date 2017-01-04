@@ -68,7 +68,7 @@ class Node:
         Returns:
             list of nodes
         """
-        filepath = '../data/nodes_{}_{}'.format(n_swiss_nodes, n_foreign_nodes)
+        filepath = '../data/nodes/nodes_{}_{}.pkl'.format(n_swiss_nodes, n_foreign_nodes)
 
         # Check if the file already exists
         nodes = Node.__pickle_try_load(filepath)
@@ -130,7 +130,7 @@ class Node:
         Returns:
             list of nodes
         """
-        filepath = '../data/swiss_nodes_{}.pkl'.format(n_nodes)
+        filepath = '../data/nodes/swiss_nodes_{}.pkl'.format(n_nodes)
 
         # Check if the file already exists
         nodes = Node.__pickle_try_load(filepath)
@@ -177,7 +177,7 @@ class Node:
             Pandas Dataframe with cities.
         """
         # Import data
-        df = pd.read_csv('../data/{}/{}.txt'.format(country_code, country_code),
+        df = pd.read_csv('../data/geonames/{}/{}.txt'.format(country_code, country_code),
                                                 header=None, encoding='utf8',
                                                 delimiter='\t', dtype={9: str})
 
