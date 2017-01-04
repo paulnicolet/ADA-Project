@@ -4,6 +4,13 @@
 ### Goal
 The goal is to look for geographical people flows in Switzerland, from  a set of geolocalized tweets.
 
+### Layout
+* `swiss_flows` : main project package containing all the modules.
+* `notebooks` : package containing the iPython notebooks used to develop the pipeline for each main feature. 
+* `test` : unit testing package.
+* `data` : package containing the data used to develop the prototype.
+* `doc` : documentation package.
+
 ### Dependencies
 * `pandas`
 * `haversine`
