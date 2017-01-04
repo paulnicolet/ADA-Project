@@ -11,7 +11,7 @@ class TestNodes(unittest.TestCase):
         print('-- test_locate_point --')
         # Generate 10 nodes, Lausanne is in the list
         print('Creating 10 nodes...')
-        nodes = Node.generate_nodes(n_nodes=10)
+        nodes = Node.generate_swiss_nodes(n_nodes=10)
 
         # Create a node close to Lausanne
         print('Creating a node close to Lausanne...')
@@ -25,6 +25,19 @@ class TestNodes(unittest.TestCase):
 
         self.assertEqual(best.name, 'Lausanne')
 
+    def test_generate_swiss_nodes(self):
+        print('-- test_generate_swiss_nodes --')
+        n_nodes = [10, 100, 3000]
+
+        for n in n_nodes:
+            print('Testing with {} nodes...'.format(n))
+            print('\t Creating the list...')
+            nodes = Node.generate_swiss_nodes(n_nodes=n)
+            print('\t First node : {}, length : {}'.format(nodes[0], len(nodes)))
+            print('\t Trying to create it again...')
+            nodes = Node.generate_swiss_nodes(n_nodes=n)
+            print('\t First node : {}, length : {}'.format(nodes[0], len(nodes)))
+
     def test_generate_nodes(self):
         print('-- test_generate_nodes --')
         n_nodes = [10, 100, 3000]
@@ -32,10 +45,10 @@ class TestNodes(unittest.TestCase):
         for n in n_nodes:
             print('Testing with {} nodes...'.format(n))
             print('\t Creating the list...')
-            nodes = Node.generate_nodes(n_nodes=n)
+            nodes = Node.generate_nodes(n_swiss_nodes=10, n_foreign_nodes=n)
             print('\t First node : {}, length : {}'.format(nodes[0], len(nodes)))
             print('\t Trying to create it again...')
-            nodes = Node.generate_nodes(n_nodes=n)
+            nodes = Node.generate_nodes(n_swiss_nodes=10, n_foreign_nodes=n)
             print('\t First node : {}, length : {}'.format(nodes[0], len(nodes)))
 
 if __name__ == '__main__':
