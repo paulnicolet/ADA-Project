@@ -53,7 +53,7 @@ class Node:
 
 
     @staticmethod
-    def generate_nodes(n_nodes=10):
+    def generate_swiss_nodes(n_nodes=10):
         """
         Generate the nodes
         and save it to a file nodes_<n_nodes>.pkl in the data/ directory.
@@ -66,7 +66,7 @@ class Node:
         Returns:
             list of nodes
         """
-        filepath = '../data/nodes_{}.pkl'.format(n_nodes)
+        filepath = '../data/swiss_nodes_{}.pkl'.format(n_nodes)
 
         # Look if the file already exists
         try:
