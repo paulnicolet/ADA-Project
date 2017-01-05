@@ -81,7 +81,7 @@ class Node:
         # Define the neighboring countries
         countries = ['FR', 'IT', 'DE', 'AT']
 
-        nodes = []
+        nodes = swiss_nodes
         for country in countries:
             df = Node.import_country(country)
 
