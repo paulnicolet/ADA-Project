@@ -18,7 +18,7 @@ class Node:
         self.name = name
         self.position = position
         self.population = population
-        self.radius = 15
+        self.radius = Node.__radius(population)
         self.canton = canton
         self.country = country
 
@@ -205,6 +205,18 @@ class Node:
         """ Return the distance between two nodes in kilometers. """
         return haversine(self.position, other.position)
 
+    @staticmethod
+    def __radius(pop):
+        if pop >= 300000:
+            return 12
+        elif pop >= 100000:
+            return 10
+        elif pop >= 40000:
+            return 8
+        else:
+            return 5
+
+    @staticmethod
     def __find_closest_node(lat, lon, nodes):
         """ Find the closest node and return the distance. """
         tmp = Node('tmp', (lat, lon), 0, None)
@@ -228,8 +240,9 @@ class Node:
                 return None
 
     def __str__(self):
-        return '[Node] {}, {}, {}, {}, {} km'.format(self.name,
+        return '[Node] {}, {}, {}, {}, {} km, {} people'.format(self.name,
                                                     self.country,
                                                     self.canton,
                                                     self.position,
-                                                    self.radius)
+                                                    self.radius,
+                                                    self.population)
