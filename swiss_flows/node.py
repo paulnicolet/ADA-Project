@@ -14,12 +14,13 @@ class Node:
         canton canton string code
     """
 
-    def __init__(self, name, position, population, canton):
+    def __init__(self, name, position, population, canton=None, country=None):
         self.name = name
         self.position = position
         self.population = population
         self.radius = 15
         self.canton = canton
+        self.country = country
 
     def __eq__(self, other):
         cond = (self.__dict__ == other.__dict__)
@@ -106,7 +107,8 @@ class Node:
                 args = {'name': row[1].asciiname,
                         'position': (row[1].latitude, row[1].longitude),
                         'population': row[1].population,
-                        'canton': row[1]['admin1 code']}
+                        'canton': row[1]['admin1 code'],
+                        'country': country}
 
                 nodes.append(Node(**args))
 
@@ -155,7 +157,8 @@ class Node:
             args = {'name': row[1].asciiname,
                     'position': (row[1].latitude, row[1].longitude),
                     'population': row[1].population,
-                    'canton': row[1]['admin1 code']}
+                    'canton': row[1]['admin1 code'],
+                    'country': 'CH'}
 
             nodes.append(Node(**args))
 
@@ -225,7 +228,8 @@ class Node:
                 return None
 
     def __str__(self):
-        return '[Node] {}, {}, {}, radius = {}'.format(self.name,
-                                                       self.canton,
-                                                       self.position,
-                                                       self.radius)
+        return '[Node] {}, {}, {}, {}, {} km'.format(self.name,
+                                                    self.country,
+                                                    self.canton,
+                                                    self.position,
+                                                    self.radius)
