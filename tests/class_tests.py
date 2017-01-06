@@ -40,5 +40,24 @@ class TestClasses(unittest.TestCase):
         self.assertTrue(flow1 == flow2)
         self.assertFalse(flow1 == flow3)
 
+    def test_hash(self):
+        names = ['1', '2', '3']
+        pops = [10, 100, 1000]
+        pos = (10, 10)
+
+        for name in names:
+            for pop in pops:
+                node1 = Node(name, pos, pop)
+                node2 = Node(name, pos, pop)
+                self.assertTrue(hash(node1) == hash(node2))
+
+        n1 = Node('test1', pos, 100)
+        n2 = Node('test2', pos, 1000)
+        print(hash(n1))
+        flow1 = Flow(src=n1, dst=n2)
+        flow2 = Flow(src=n1, dst=n2)
+        print(hash(flow1))
+        self.assertTrue(hash(flow1) == hash(flow2))
+
 if __name__ == '__main__':
     unittest.main()

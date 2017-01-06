@@ -2,6 +2,7 @@ import pandas as pd
 import pickle
 import warnings
 from haversine import haversine
+import hashlib
 
 class Node:
     """
@@ -25,6 +26,11 @@ class Node:
     def __eq__(self, other):
         cond = (self.__dict__ == other.__dict__)
         return isinstance(other, type(self)) and cond
+
+    def __hash__(self):
+        return ((hash(self.name) ^ hash(self.position) ^ hash(self.canton) ^ hash(self.country))
+                + self.population + self.radius)
+
 
     @staticmethod
     def locate_point(point, nodes):

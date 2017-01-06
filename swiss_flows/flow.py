@@ -5,32 +5,27 @@ class Flow:
     Parameters:
         src the source Node
         dst the destination Node
-        src_time the emission time at the source Node
-        dst_time the emission time at the destination Node
         directed True if the flow is directed
-        weight importance of the flow
     """
 
-    def __init__(self, src, dst, src_time=None, dst_time=None, directed=False):
+    def __init__(self, src, dst, directed=False):
         self.src = src
         self.dst = dst
-        # TODO src_time, dst_time shouldnt be attributes as they will consider new flows for each tweets
-        self.src_time = src_time
-        self.dst_time = dst_time
         self.directed = directed
-        self.weight = 0
 
     def __str__(self):
         link = '-->' if self.directed else '<-->'
-        return '[Flow] {} {} {} {} {}, weight = {}.'.format(self.src.name,
-                                                      link,
-                                                      self.dst.name,
-                                                      self.src_time,
-                                                      self.dst_time,
-                                                      self.weight)
+        return '[Flow] {} {} {}.'.format(self.src.name,
+                                            link,
+                                            self.dst.name)
+
     def __eq__(self, other):
         cond = (self.src == other.src) and (self.dst == other.dst) and (self.directed == other.directed)
         return isinstance(other, type(self)) and cond
+
+    def __hash__(self):
+        mod = 1231 if self.directed else 1237
+        return (hash(self.src) ^ hash(self.dst)) % mod
 
     @property
     def symmetrical(self):
