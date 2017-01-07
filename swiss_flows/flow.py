@@ -9,8 +9,15 @@ class Flow:
     """
 
     def __init__(self, src, dst, directed=False):
-        self.src = src
-        self.dst = dst
+        # Avoid symmetrical undirected flows
+        if not directed:
+            if src.name < dst.name:
+                self.src = src
+                self.dst = dst
+            else:
+                self.src = dst
+                self.dst = src
+
         self.directed = directed
 
     def __str__(self):
@@ -27,32 +34,21 @@ class Flow:
         mod = 1231 if self.directed else 1237
         return (hash(self.src) ^ hash(self.dst)) % mod
 
+    # TODO : should not be here
+    @staticmethod
+    def is_overlaping(i1, i2):
+        """
+        Returns True if the intervals are overlapping
+
+        Parameters:
+            i1 Interval as tuple
+            i2 Interval as tuple
+        """
+        return (i1[0] < i2[0] < i1[1]) or (i2[0] < i1[0] < i2[1])
+
     @property
     def symmetrical(self):
         """
         Return the symetrical flow
         """
         return Flow(src=self.dst, dst=self.src, directed=self.directed)
-
-    @staticmethod
-    def is_period_overlap(flow1, flow2):
-        """
-        The period of a flow is determined by the interval of time between
-        src_time and dst_time. This method determines whether the interval
-        of two flows overlap.
-
-        Parameters:
-            flow1 The first flow to consider
-            flow2 The second flow to consider
-
-        Returns:
-            boolean saying whether or not the time periods of the two flows overlap
-        """
-
-        f1start = flow1.src_time
-        f2start = flow2.src_time
-
-        f1end = flow1.dst_time
-        f2end = flow2.dst_time
-
-        return (f1start <= f2start <= f1end) or (f2start <= f1start <= f2end)
