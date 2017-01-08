@@ -8,9 +8,11 @@
     <script type="text/javascript">  
       function draw(geo_data) {
         "use strict";
+
+        // the width and height are chosen so to be able to scroll slightly 
         var margin = 75,
-            width = 1400 - margin,
-            height = 600 - margin;
+            width = 1800 - margin,
+            height = 1000 - margin;
 
         var svg = d3.select("body")
             .append("svg")
@@ -20,8 +22,9 @@
             .attr('class', 'map');
 
         var projection = d3.geo.mercator()
-                               .scale(150)
-                               .translate( [width / 2, height / 1.5]);
+                               .scale(9000)
+                               .center([9.02667, 46.40111]) // because of scroll, not perfectly centered on CH
+                               .translate( [width / 2, height / 2]);
 
         var path = d3.geo.path().projection(projection);
 
@@ -32,7 +35,7 @@
                      .attr('d', path)
                      .style('fill', 'lightBlue')
                      .style('stroke', 'black')
-                     .style('stroke-width', 0.5);
+                     .style('stroke-width', 0.5); // make the lines thiner
       };
       </script>
   </head>
