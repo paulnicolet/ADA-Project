@@ -39,7 +39,10 @@
 <body>
   <script type="text/javascript">
   /*
-    Use D3 to load the GeoJSON file
+    Note: JSON files can not be loaded locally in the browser for security reasons.
+          In order to load the JSON file, create a server: python -m http.server [PORT #]
+          in the directory where the html file resides, and then go to localhost:[PORT #].
+          This version will work since the server uses http.
     */
     
 d3.json("world_countries.json", draw);
