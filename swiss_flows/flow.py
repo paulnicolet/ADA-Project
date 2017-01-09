@@ -9,16 +9,14 @@ class Flow:
     """
 
     def __init__(self, src, dst, directed=False):
+        self.src = src
+        self.dst = dst
+        self.directed = directed
+
         # Avoid symmetrical undirected flows
-        if not directed:
-            if src.name < dst.name:
-                self.src = src
-                self.dst = dst
-            else:
+        if not directed and src.name > dst.name:
                 self.src = dst
                 self.dst = src
-
-        self.directed = directed
 
     def __str__(self):
         link = '-->' if self.directed else '<-->'
@@ -34,7 +32,6 @@ class Flow:
         mod = 1231 if self.directed else 1237
         return (hash(self.src) ^ hash(self.dst)) % mod
 
-    # TODO : should not be here
     @staticmethod
     def is_overlaping(i1, i2):
         """
