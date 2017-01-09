@@ -33,9 +33,11 @@ class Flow:
         return (hash(self.src) ^ hash(self.dst)) % mod
 
     @staticmethod
-    def is_overlaping(i1, i2):
+    def is_overlapping(i1, i2):
         """
-        Returns True if the intervals are overlapping
+        Returns True if the intervals are overlapping.
+        Need strict inequalities : A-B-A should count as (A-B) and (B-A), so
+        they should not be detected as overlapping.
 
         Parameters:
             i1 Interval as tuple
