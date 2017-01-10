@@ -6,12 +6,14 @@ class Flow:
         src the source Node
         dst the destination Node
         directed True if the flow is directed
+        weight the importance of the flow.
     """
 
     def __init__(self, src, dst, directed=False):
         self.src = src
         self.dst = dst
         self.directed = directed
+        self.weight = 0
 
         # Avoid symmetrical undirected flows
         if not directed and src.name > dst.name:
@@ -20,9 +22,10 @@ class Flow:
 
     def __str__(self):
         link = '-->' if self.directed else '<-->'
-        return '[Flow] {} {} {}.'.format(self.src.name,
-                                            link,
-                                            self.dst.name)
+        return '[Flow] {} {} {} ({}).'.format(self.src.name,
+                                              link,
+                                              self.dst.name,
+                                              self.weight)
 
     def __eq__(self, other):
         cond = (self.src == other.src) and (self.dst == other.dst) and (self.directed == other.directed)
