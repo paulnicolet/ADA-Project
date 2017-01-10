@@ -14,6 +14,8 @@ class Flow:
         self.dst = dst
         self.directed = directed
         self.weight = 0
+        self.start_date = None
+        self.end_date = None
 
         # Avoid symmetrical undirected flows
         if not directed and src.name > dst.name:
@@ -22,14 +24,22 @@ class Flow:
 
     def __str__(self):
         link = '-->' if self.directed else '<-->'
-        return '[Flow] {} {} {} ({}).'.format(self.src.name,
-                                              link,
-                                              self.dst.name,
-                                              self.weight)
+        return '[Flow] {} {} {} (weight: {}, start: {}, end: {}).'.format(self.src.name,
+                                                                          link,
+                                                                          self.dst.name,
+                                                                          self.weight,
+                                                                          self.start_date,
+                                                                          self.end_date)
 
     def __eq__(self, other):
         cond = (self.src == other.src) and (self.dst == other.dst) and (self.directed == other.directed)
         return isinstance(other, type(self)) and cond
+
+    def __lt__(self, other):
+        return self.src.name < other.src.name
+
+    def __gt__(self, other):
+        return not self.__lt__(other)
 
     def __hash__(self):
         mod = 1231 if self.directed else 1237
