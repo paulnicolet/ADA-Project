@@ -7,6 +7,8 @@
     </style>
     <script type="text/javascript">  
       function draw(geo_data) {
+
+        // Use strict mode
         "use strict";
 
         // the width and height are chosen so to be able to scroll slightly 
@@ -28,6 +30,7 @@
 
         var path = d3.geo.path().projection(projection);
 
+        // Draw world map
         var map = svg.selectAll('path')
                      .data(geo_data.features)
                      .enter()
@@ -36,6 +39,34 @@
                      .style('fill', 'lightBlue')
                      .style('stroke', 'black')
                      .style('stroke-width', 0.5); // make the lines thiner
+
+        // Callback function that takes the Json nodes data, transforms it, and plots it           
+        function plot_nodes(nodes_json) {
+
+            /*
+            var nodes;
+
+            svg.append('g')
+               .attr("class", "bubble")
+               .selectAll("circle")
+               .data(nested)
+               .enter()
+               .append("circle")
+               .attr('cx', function(d) { return d.values['x']; })
+               .attr('cy', function(d) { return d.values['y']; })
+               .attr('r', function(d) {
+                    return d.values['attendance'];
+               });
+            */
+        }
+
+        // Load the nodes
+        d3.json("nodes.json", function(nodes_json) {
+          
+          // debug
+          console.log(nodes_json);
+        }, plot_nodes);
+
       };
       </script>
   </head>
@@ -48,7 +79,7 @@
           This version will work since the server uses http.
     */
     
-d3.json("world_countries.json", draw);
+      d3.json("world_countries.json", draw);
   </script>
 </body>
 </html>
