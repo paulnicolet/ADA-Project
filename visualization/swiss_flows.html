@@ -43,8 +43,12 @@
         // Callback function that takes the Json nodes data, transforms it, and plots it           
         function plot_nodes(nodes_json) {
 
-            console.log("Reachability");
+            // Get pixel coordinates from longitude and latitude
+            var pixel_coord = projection([nodes_json.nodes[0].lon, nodes_json.nodes[0].lat]);
+            console.log(pixel_coord);
 
+            // Draw a circle for each node
+            /*
             svg.append('g')
                .attr("class", "bubble")
                .selectAll("circle")
@@ -52,6 +56,7 @@
                .enter()
                .append("circle")
                .attr('cx', function(node) { 
+                  console.log(node);
                   pixel_coord = projection([node.lon, node.lat]);
                   return pixel_coord[0]; 
                 })
@@ -62,6 +67,7 @@
                .attr('r', function(node) {
                     return node.weight * 10000;
                });
+            */
             
         };
 
