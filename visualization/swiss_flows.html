@@ -24,7 +24,7 @@
             .attr('class', 'map');
 
         var projection = d3.geo.mercator()
-                               .scale(9000)
+                               .scale(100)
                                .center([9.02667, 46.40111]) // because of scroll, not perfectly centered on CH
                                .translate( [width / 2, height / 2]);
 
@@ -43,29 +43,32 @@
         // Callback function that takes the Json nodes data, transforms it, and plots it           
         function plot_nodes(nodes_json) {
 
-            /*
-            var nodes;
+            console.log("Reachability");
 
             svg.append('g')
                .attr("class", "bubble")
                .selectAll("circle")
-               .data(nested)
+               .data(nodes_json)
                .enter()
                .append("circle")
-               .attr('cx', function(d) { return d.values['x']; })
-               .attr('cy', function(d) { return d.values['y']; })
-               .attr('r', function(d) {
-                    return d.values['attendance'];
+               .attr('cx', function(node) { 
+                  pixel_coord = projection([node.lon, node.lat]);
+                  return pixel_coord[0]; 
+                })
+               .attr('cy', function(node) { 
+                  pixel_coord = projection([node.lon, node.lat]);
+                  return pixel_coord[1];  
+                })
+               .attr('r', function(node) {
+                    return node.weight * 10000;
                });
-            */
-        }
+            
+        };
 
         // Load the nodes
         d3.json("nodes.json", function(nodes_json) {
-          
-          // debug
-          console.log(nodes_json);
-        }, plot_nodes);
+          plot_nodes(nodes_json);
+        });
 
       };
       </script>
