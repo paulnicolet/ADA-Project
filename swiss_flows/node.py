@@ -2,7 +2,8 @@ import pandas as pd
 import pickle
 import warnings
 from haversine import haversine
-import hashlib
+import operator
+import collections
 
 class Node:
     """
@@ -31,6 +32,25 @@ class Node:
         return ((hash(self.name) ^ hash(self.position) ^ hash(self.canton) ^ hash(self.country))
                 + self.population + self.radius)
 
+    @staticmethod
+    def weight_nodes(weighted_flows):
+        """
+        Attribute a weight to each node (mainly for the visualization).
+
+        Parameters:
+            weighted_flows a list of flows, with weight.
+
+        Returns:
+            A list of tuple (Node, weight), sorted by weight in descending order.
+        """
+
+        weighted_nodes = collections.defaultdict(int)
+
+        for flow in final_flows:
+            weighted_nodes[flow.src] += flow.weight
+            weighted_nodes[flow.dst] += flow.weight
+
+        return sorted(weighted_nodes.items(), key=operator.itemgetter(1), reverse=True)
 
     @staticmethod
     def locate_point(point, nodes):
