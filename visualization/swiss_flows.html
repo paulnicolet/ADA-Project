@@ -7,14 +7,10 @@
     </style>
     <script type="text/javascript">  
       function draw(geo_data) {
-
-        // Use strict mode
         "use strict";
-
-        // the width and height are chosen so to be able to scroll slightly 
         var margin = 75,
-            width = 1800 - margin,
-            height = 1000 - margin;
+            width = 1400 - margin,
+            height = 600 - margin;
 
         var svg = d3.select("body")
             .append("svg")
@@ -24,13 +20,12 @@
             .attr('class', 'map');
 
         var projection = d3.geo.mercator()
-                               .scale(100)
+                               .scale(5000)
                                .center([9.02667, 46.40111]) // because of scroll, not perfectly centered on CH
                                .translate( [width / 2, height / 2]);
 
         var path = d3.geo.path().projection(projection);
 
-        // Draw world map
         var map = svg.selectAll('path')
                      .data(geo_data.features)
                      .enter()
@@ -38,44 +33,52 @@
                      .attr('d', path)
                      .style('fill', 'lightBlue')
                      .style('stroke', 'black')
-                     .style('stroke-width', 0.5); // make the lines thiner
+                     .style('stroke-width', 0.5);
 
-        // Callback function that takes the Json nodes data, transforms it, and plots it           
-        function plot_nodes(nodes_json) {
+        function plot_points(data) {
 
-            // Get pixel coordinates from longitude and latitude
-            var pixel_coord = projection([nodes_json.nodes[0].lon, nodes_json.nodes[0].lat]);
-            console.log(pixel_coord);
+            console.log(data);
+            
+            // Get the maximum weight 
+            var weight_max = d3.max(data, function(node) {
+                return node['weight'];
+            });
 
-            // Draw a circle for each node
-            /*
+            // The radius of a circle is proportional to the maximum weight 
+            var radius = d3.scale.sqrt()
+                           .domain([0, weight_max])
+                           .range([0, 15]);
+
+            // Draw circles
             svg.append('g')
                .attr("class", "bubble")
                .selectAll("circle")
-               .data(nodes_json)
+               .data(data)
                .enter()
                .append("circle")
                .attr('cx', function(node) { 
-                  console.log(node);
-                  pixel_coord = projection([node.lon, node.lat]);
-                  return pixel_coord[0]; 
+                  //pix_coord = projection([node['longitude'], node['latitude']]);
+                  //console.log(pix_coord);
+                  return projection([node['longitude'], node['latitude']])[0]; 
                 })
                .attr('cy', function(node) { 
-                  pixel_coord = projection([node.lon, node.lat]);
-                  return pixel_coord[1];  
+                  //pix_coord = projection([node['longitude'], node['latitude']]);
+                  return projection([node['longitude'], node['latitude']])[1]; 
                 })
                .attr('r', function(node) {
-                    return node.weight * 10000;
-               });
-            */
-            
-        };
+                    return radius(node['weight']);
+               })
+               .attr('fill', 'rgb(247, 148, 32)')
+               .attr('stroke', 'black')
+               .attr('stroke-width', 0.7)
+               .attr('opacity', 0.7);
+               //debugger;
+               
+        }
 
-        // Load the nodes
-        d3.json("nodes.json", function(nodes_json) {
-          plot_nodes(nodes_json);
-        });
-
+        d3.tsv("nodes.tsv", function(d) {
+          return d;
+        }, plot_points);
       };
       </script>
   </head>
@@ -88,7 +91,7 @@
           This version will work since the server uses http.
     */
     
-      d3.json("world_countries.json", draw);
+d3.json("world_countries.json", draw);
   </script>
 </body>
 </html>
