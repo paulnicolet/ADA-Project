@@ -6,6 +6,7 @@
     <style>
     </style>
     <script type="text/javascript">  
+
       function draw(geo_data) {
         "use strict";
         var margin = 75,
@@ -39,12 +40,12 @@
 
             console.log(data);
             
-            // Get the maximum weight 
+            // Find the maximum weight among all nodes 
             var weight_max = d3.max(data, function(node) {
                 return node['weight'];
             });
 
-            // The radius of a circle is proportional to the maximum weight 
+            // Scale the radius so that circles are visible if if they have extreme weights 
             var radius = d3.scale.sqrt()
                            .domain([0, weight_max])
                            .range([0, 15]);
@@ -76,6 +77,7 @@
                .enter()
                .append("text")
                .attr("x", function(node) { 
+                 // The node's name is placed on its right side 
                  return projection([node['longitude'], node['latitude']])[0] + radius(node['weight']) + 1; 
                })
                .attr("y", function(node) {  
@@ -90,22 +92,28 @@
                
         }
 
+        // Load the nodes and plot them 
         d3.tsv("nodes.tsv", function(d) {
           return d;
         }, plot_points);
+
       };
+
       </script>
   </head>
 <body>
   <script type="text/javascript">
-  /*
-    Note: JSON files can not be loaded locally in the browser for security reasons.
-          In order to load the JSON file, create a server: python -m http.server [PORT #]
-          in the directory where the html file resides, and then go to localhost:[PORT #].
-          This version will work since the server uses http.
-    */
-    
-d3.json("world_countries.json", draw);
+
+    /*
+      Note: JSON files can not be loaded locally in the browser for security reasons.
+            In order to load the JSON file, create a server: python -m http.server [PORT #]
+            in the directory where the html file resides, and then go to localhost:[PORT #].
+            This version will work since the server uses http.
+      */
+
+    // Load the map and draw the visualization
+    d3.json("world_countries.json", draw);
+
   </script>
 </body>
 </html>
