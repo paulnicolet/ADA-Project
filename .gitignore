@@ -8,5 +8,8 @@
 *.log
 *.pkl
 
+# Execptions
+!nodes.tsv
+
 # iPython
 .ipynb_checkpoints
