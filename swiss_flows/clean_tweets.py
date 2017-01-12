@@ -19,7 +19,7 @@ def clean_tweets(filename):
 	df.columns = schema[1]
 
 	# Keep only the useful columns
-	useful_col = ['id', 'userId', 'createdAt', 'placeLongitude', 'placeLatitude', 'userLocation']
+	useful_col = ['id', 'userId', 'createdAt', 'placeLongitude', 'placeLatitude']
 	df = df[useful_col]
 
 	# Drop rows which have missing values in important columns
