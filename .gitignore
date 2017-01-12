@@ -9,7 +9,8 @@
 *.pkl
 
 # Execptions
-!nodes.tsv
+!dummy_nodes.tsv
+!dummy_flows.tsv
 
 # iPython
 .ipynb_checkpoints
