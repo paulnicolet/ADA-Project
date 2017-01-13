@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import pickle
 import os
 import csv
 import sys
@@ -28,3 +29,18 @@ def clean_tweets(filename):
 
 	# Write in a file
 	df.to_csv(filename + '.csv', index=False)
+
+	return df
+
+def filter_users(df):
+	grouped = df.groupby('userId')
+
+	user_tweets = {}
+
+	for user, tweets in grouped:
+		if tweets.shape[0] > 1:
+			user_tweets[user] = tweets.drop('userId', axis=1).values.tolist()
+
+	# Save the result
+	with open('../data/filtered_users.pkl', 'wb') as file:
+		pickle.dump(user_tweets, file)
