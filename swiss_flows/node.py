@@ -79,7 +79,7 @@ class Node:
         return best_node
 
     @staticmethod
-    def generate_nodes(n_swiss_nodes=10, n_foreign_nodes=10, pop_threshold=15000):
+    def generate_nodes(n_swiss_nodes=10, n_foreign_nodes=10, pop_threshold=15000, save=False):
         """
         Generate all the nodes, swiss and foreign
         and save it to a file nodes_<n_swiss_nodes>_<n_foreign_nodes>.pkl
@@ -103,7 +103,7 @@ class Node:
             return nodes
 
         # Generate swiss nodes
-        swiss_nodes = Node.generate_swiss_nodes(n_nodes=n_swiss_nodes)
+        swiss_nodes = Node.generate_swiss_nodes(n_nodes=n_swiss_nodes, save=save)
 
         # Define the neighboring countries
         countries = ['FR', 'IT', 'DE', 'AT']
@@ -139,13 +139,14 @@ class Node:
                 nodes.append(Node(**args))
 
         # Save and return the result
-        with open(filepath, 'wb') as file:
-            pickle.dump(nodes, file)
+        if save:
+            with open(filepath, 'wb') as file:
+                pickle.dump(nodes, file)
 
         return nodes
 
     @staticmethod
-    def generate_swiss_nodes(n_nodes=10):
+    def generate_swiss_nodes(n_nodes=10, save=False):
         """
         Generate the swiss nodes
         and save it to a file swiss_nodes_<n_nodes>.pkl in the data/ directory.
@@ -189,8 +190,9 @@ class Node:
             nodes.append(Node(**args))
 
         # Save the result
-        with open(filepath, 'wb') as file:
-            pickle.dump(nodes, file)
+        if save:
+            with open(filepath, 'wb') as file:
+                pickle.dump(nodes, file)
 
         return nodes
 
