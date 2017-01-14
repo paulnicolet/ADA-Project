@@ -10,26 +10,28 @@
     <script type='text/javascript'>
 
     function plot_flows(data) {
-        
-        var w = 300;
-        var h = 300;
 
+        var margin = 75,
+            w = 1400 - margin,
+            h = 600 - margin;
+
+        // Append an SVG element to the body
         var svg =  d3.select("body")
                     .append("svg")
                     .attr("width", w)
                     .attr("height", h);
 
-        // arrow
-        svg.append("svg:defs")
-            .append("svg:marker")
-            .attr("id", "triangle")
-            .attr("refX", 6)
+        // Plot the arrow tip
+        svg.append("svg:defs") // defs are used for elements that are meant to be reused
+            .append("svg:marker") // markers mark the end of the line. They need to be inside a defs
+            .attr("id", "triangle") // id referenced by the line 
+            .attr("refX", 6) // places the arrow tip at a certain position compared to the line
             .attr("refY", 6)
             .attr("markerWidth", 30)
             .attr("markerHeight", 30)
-            .attr("orient", "auto")
+            .attr("orient", "auto") // 'auto' indicates that the marker is oriented such that its positive x-axis is pointing in the direction of the path at the point it is placed.
             .append("path")
-            .attr("d", "M 0 0 12 6 0 12 3 6")
+            .attr("d", "M 0 0 4 6 0 12 3 6")
             .style("fill", "black");
 
         //line              
