@@ -31,15 +31,33 @@
             .attr("markerHeight", 30)
             .attr("orient", "auto") // 'auto' indicates that the marker is oriented such that its positive x-axis is pointing in the direction of the path at the point it is placed.
             .append("path")
-            .attr("d", "M 0 0 4 6 0 12 3 6")
+            .attr("d", "M 0 0 12 6 0 12 3 6") // defines the shape of the arrow tip
             .style("fill", "black");
 
-        //line              
+
         svg.append("line")
             .attr("x1",  100)
             .attr("y1", 100)
             .attr("x2", 200)
             .attr("y2", 100)
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
+            .attr("marker-end", "url(#triangle)");
+
+        svg.append("line")
+            .attr("x1",  300)
+            .attr("y1", 300)
+            .attr("x2", 400)
+            .attr("y2", 200)
+            .attr("stroke-width", 1)
+            .attr("stroke", "black")
+            .attr("marker-end", "url(#triangle)");
+
+        svg.append("line")
+            .attr("x1",  600)
+            .attr("y1", 100)
+            .attr("x2", 20)
+            .attr("y2", 300)
             .attr("stroke-width", 1)
             .attr("stroke", "black")
             .attr("marker-end", "url(#triangle)");
