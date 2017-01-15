@@ -1,9 +1,7 @@
 import pandas as pd
 import numpy as np
 import pickle
-import os
 import csv
-import sys
 
 def clean_tweets(file_path, tosave_path):
 	"""
@@ -17,15 +15,20 @@ def clean_tweets(file_path, tosave_path):
 		The dataframe of clean tweets.
 	"""
 	# Load the schema
-	schema_path = os.path.dirname('__file__') + '../data/twitter-swisscom/schema.txt'
-	schema = pd.read_csv(schema_path, delim_whitespace=True, header=None)
+	SCHEMA_PATH = '../data/twitter-swisscom/schema.txt'
+	schema = pd.read_csv(SCHEMA_PATH, delim_whitespace=True, header=None)
 
 	# Load the dirty tweets
-	data_path = os.path.dirname('__file__') + file_path
-	df = pd.read_csv(data_path, sep='\t',encoding='utf-8', escapechar='\\', quoting=csv.QUOTE_NONE, names=schema[1], na_values='N')
+	df = pd.read_csv(file_path, sep='\t',
+								encoding='utf-8',
+								escapechar='\\',
+								quoting=csv.QUOTE_NONE,
+								names=schema[1],
+								na_values='N')
 
 	# Keep only the useful columns
-	useful_col = ['id', 'userId', 'createdAt', 'placeLongitude', 'placeLatitude']
+	useful_col = ['id', 'userId', 'createdAt',
+				  'placeLongitude', 'placeLatitude']
 	df = df[useful_col]
 
 	# Drop rows which have missing values in important columns

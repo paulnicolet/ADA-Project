@@ -12,6 +12,11 @@ class Flow:
         weight the importance of the flow.
     """
 
+    WEIGHT_IDX = 'weight'
+    START_IDX = 'start'
+    END_IDX = 'end'
+    INTRVL_IDX = 'intervals'
+
     def __init__(self, src, dst, directed=False):
         self.src = src
         self.dst = dst
@@ -24,7 +29,7 @@ class Flow:
         if not directed and src.name > dst.name:
                 self.src = dst
                 self.dst = src
-                
+
     @staticmethod
     def infer_flows(user_id, tweets, nodes, delta_t, directed):
         """
@@ -41,13 +46,17 @@ class Flow:
         Returns:
             Tuple (user_id, flows) with flows a dictionnary of the following
             form :
-            {Flow: {'weight': ..., 'start': ..., 'end': ..., 'intervals': ...}}
+            {Flow: {weight: ...,
+                    start: ...,
+                    end: ...,
+                    intervals: ...}}
 
             Note: the result is returned as a dictionnary in the notebook.
             The tuple form is just a convenience for Spark adaptation.
         """
         # Generate all possible pairs of tweet sorted by interval length
-        pairs = sorted(list(itertools.combinations(tweets, 2)), key=Flow._by_interval_len)
+        pairs = sorted(list(itertools.combinations(tweets, 2)),
+                       key=Flow._by_interval_len)
 
         # {f1 : {weight:1, intervals:[interval1, interval2...]}}
         flows = {}
@@ -93,28 +102,31 @@ class Flow:
                 overlap = False
                 if flow in flows:
                     # Look for overlapping flows
-                    for interval in flows[flow]['intervals']:
+                    for interval in flows[flow][Flow.INTRVL_IDX]:
                         if Flow.is_overlapping(tweet_interval, interval):
                             overlap = True
                             break
 
                 else:
                     # Add the initial values if it's a new flow
-                    flows[flow] = {'weight': 1, 'intervals': [], 'start':ts1, 'end':ts2}
+                    flows[flow] = {Flow.WEIGHT_IDX: 1,
+                                   Flow.INTRVL_IDX: [],
+                                   Flow.START_IDX:ts1,
+                                   Flow.END_IDX:ts2}
 
                 # If no overlap, then it's not the exact same flow
                 if not overlap:
                     # Update start date
-                    flows[flow]['start'] = min(ts1, flows[flow]['start'])
+                    flows[flow][Flow.START_IDX] = min(ts1, flows[flow][Flow.START_IDX])
 
                     # Update end date
-                    flows[flow]['end'] = max(ts2, flows[flow]['end'])
+                    flows[flow][Flow.END_IDX] = max(ts2, flows[flow][Flow.END_IDX])
 
                     # Update weight
-                    flows[flow]['weight'] += 1
+                    flows[flow][Flow.WEIGHT_IDX] += 1
 
                 # In any case, add the interval we just found for later use
-                flows[flow]['intervals'].append(tweet_interval)
+                flows[flow][Flow.INTRVL_IDX].append(tweet_interval)
 
         return (user_id, flows)
 
@@ -134,18 +146,22 @@ class Flow:
         for user, flows in user_flows:
             for flow, attr in flows.items():
                 if flow not in agg_flows:
-                    agg_flows[flow] = {'weight': attr['weight'], 'start': attr['start'], 'end': attr['end']}
+                    agg_flows[flow] = {Flow.WEIGHT_IDX: attr[Flow.WEIGHT_IDX],
+                                       Flow.START_IDX: attr[Flow.START_IDX],
+                                       Flow.END_IDX: attr[Flow.END_IDX]}
                 else:
-                    agg_flows[flow]['weight'] += attr['weight']
-                    agg_flows[flow]['start'] = min(agg_flows[flow]['start'], attr['start'])
-                    agg_flows[flow]['end'] = min(agg_flows[flow]['end'], attr['end'])
+                    agg_flows[flow][Flow.WEIGHT_IDX] += attr[Flow.WEIGHT_IDX]
+                    agg_flows[flow][Flow.START_IDX] = min(agg_flows[flow][Flow.START_IDX],
+                                                          attr[Flow.START_IDX])
+                    agg_flows[flow][Flow.END_IDX] = min(agg_flows[flow][Flow.END_IDX],
+                                                        attr[Flow.END_IDX])
 
 
         final_flows = []
         for flow, attr in agg_flows.items():
-            flow.weight = attr['weight']
-            flow.start_date = attr['start']
-            flow.end_date = attr['end']
+            flow.weight = attr[Flow.WEIGHT_IDX]
+            flow.start_date = attr[Flow.START_IDX]
+            flow.end_date = attr[Flow.END_IDX]
             final_flows.append(flow)
 
         # Sort it by weight
@@ -187,15 +203,19 @@ class Flow:
 
     def __str__(self):
         link = '-->' if self.directed else '<-->'
-        return '[Flow] {} {} {} (weight: {}, start: {}, end: {}).'.format(self.src.name,
-                                                                          link,
-                                                                          self.dst.name,
-                                                                          self.weight,
-                                                                          self.start_date,
-                                                                          self.end_date)
+        template = '[Flow] {} {} {} (weight: {}, start: {}, end: {}).'
+        return template.format(self.src.name,
+                               link,
+                               self.dst.name,
+                               self.weight,
+                               self.start_date,
+                               self.end_date)
 
     def __eq__(self, other):
-        cond = (self.src == other.src) and (self.dst == other.dst) and (self.directed == other.directed)
+        cond = (self.src == other.src and
+                self.dst == other.dst and
+                self.directed == other.directed)
+
         return isinstance(other, type(self)) and cond
 
     def __lt__(self, other):

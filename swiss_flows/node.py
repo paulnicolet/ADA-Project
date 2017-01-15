@@ -24,14 +24,6 @@ class Node:
         self.canton = canton
         self.country = country
 
-    def __eq__(self, other):
-        cond = (self.__dict__ == other.__dict__)
-        return isinstance(other, type(self)) and cond
-
-    def __hash__(self):
-        return ((hash(self.name) ^ hash(self.position) ^ hash(self.canton) ^ hash(self.country))
-                + self.population + self.radius)
-
     @staticmethod
     def weight_nodes(weighted_flows):
         """
@@ -50,7 +42,9 @@ class Node:
             weighted_nodes[flow.src] += flow.weight
             weighted_nodes[flow.dst] += flow.weight
 
-        return sorted(weighted_nodes.items(), key=operator.itemgetter(1), reverse=True)
+        return sorted(weighted_nodes.items(),
+                      key=operator.itemgetter(1),
+                      reverse=True)
 
     @staticmethod
     def locate_point(point, nodes):
@@ -79,7 +73,10 @@ class Node:
         return best_node
 
     @staticmethod
-    def generate_nodes(n_swiss_nodes=10, n_foreign_nodes=10, pop_threshold=15000, save=False):
+    def generate_nodes(n_swiss_nodes=10,
+                       n_foreign_nodes=10,
+                       pop_threshold=15000,
+                       save=False):
         """
         Generate all the nodes, swiss and foreign
         and save it to a file nodes_<n_swiss_nodes>_<n_foreign_nodes>.pkl
@@ -95,7 +92,8 @@ class Node:
         Returns:
             list of nodes
         """
-        filepath = '../data/nodes/nodes_{}_{}.pkl'.format(n_swiss_nodes, n_foreign_nodes)
+        base = '../data/nodes/nodes_{}_{}.pkl'
+        filepath = base.format(n_swiss_nodes, n_foreign_nodes)
 
         # Check if the file already exists
         nodes = Node.__pickle_try_load(filepath)
@@ -103,7 +101,8 @@ class Node:
             return nodes
 
         # Generate swiss nodes
-        swiss_nodes = Node.generate_swiss_nodes(n_nodes=n_swiss_nodes, save=save)
+        swiss_nodes = Node.generate_swiss_nodes(n_nodes=n_swiss_nodes,
+                                                save=save)
 
         # Define the neighboring countries
         countries = ['FR', 'IT', 'DE', 'AT']
@@ -116,16 +115,20 @@ class Node:
             df = df[df['population'] > pop_threshold]
 
             # Create the new distance feature
-            df['distance'] = df.apply(lambda x: Node.__find_closest_node(x['latitude'],x['longitude'], swiss_nodes), axis=1)
+            find_node = lambda x: Node.__find_closest_node(x['latitude'],
+                                                           x['longitude'],
+                                                           swiss_nodes)
+            df['distance'] = df.apply(find_node, axis=1)
 
             # Sort rows by distance
             df = df.sort_values(by='distance', ascending=True)
 
             # Take the desired number
             if df.shape[0] < n_foreign_nodes:
-                warnings.warn(
-                    '{} nodes requested, {} nodes max, returns {} nodes'.format(n_foreign_nodes, df.shape[0], df.shape[0]),
-                    UserWarning)
+                template = '{} nodes requested, {} nodes max, returns {} nodes'
+                msg = template.format(n_foreign_nodes, df.shape[0], df.shape[0])
+                warnings.warn(msg, UserWarning)
+
             df = df[:n_foreign_nodes]
 
             # Generate the nodes
@@ -172,9 +175,9 @@ class Node:
         # Sort rows by population and take the n_nodes first
         df = df.sort_values(by='population', ascending=False)
         if df.shape[0] < n_nodes:
-            warnings.warn(
-                '{} nodes requested, {} nodes max, returns {} nodes'.format(n_nodes, df.shape[0], df.shape[0]),
-                UserWarning)
+            template = '{} nodes requested, {} nodes max, returns {} nodes'
+            msg = template.format(n_nodes, df.shape[0], df.shape[0])
+            warnings.warn(msg, UserWarning)
 
         df = df[:n_nodes]
 
@@ -208,9 +211,12 @@ class Node:
             Pandas Dataframe with cities.
         """
         # Import data
-        df = pd.read_csv('../data/geonames/{}/{}.txt'.format(country_code, country_code),
-                                                header=None, encoding='utf8',
-                                                delimiter='\t', dtype={9: str})
+        FILE_BASE = '../data/geonames/{}/{}.txt'
+        df = pd.read_csv(FILE_BASE.format(country_code, country_code),
+                         header=None,
+                         encoding='utf8',
+                         delimiter='\t',
+                         dtype={9: str})
 
         # Build the index
         index = ['geonameid', 'name', 'asciiname', 'alternatenames',
@@ -230,11 +236,12 @@ class Node:
         return df
 
     def dist(self, other):
-        """ Return the distance between two nodes in kilometers. """
+        """ Returns the distance between two nodes in kilometers. """
         return haversine(self.position, other.position)
 
     @staticmethod
     def __radius(pop):
+        """ Returns the radius of a city from the population. """
         if pop >= 300000:
             return 12
         elif pop >= 100000:
@@ -274,3 +281,15 @@ class Node:
                                                     self.position,
                                                     self.radius,
                                                     self.population)
+
+    def __eq__(self, other):
+        cond = (self.__dict__ == other.__dict__)
+        return isinstance(other, type(self)) and cond
+
+    def __hash__(self):
+        return ((hash(self.name) ^
+                 hash(self.position) ^
+                 hash(self.canton) ^
+                 hash(self.country))
+                + self.population
+                + self.radius)

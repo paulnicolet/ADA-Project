@@ -5,11 +5,12 @@
 The goal is to look for geographical people flows in Switzerland, from  a set of geolocalized tweets.
 
 ### Layout
-* `swiss_flows` : main project package containing all the modules.
-* `notebooks` : package containing the iPython notebooks used to develop the pipeline for each main feature. 
-* `test` : unit testing package.
-* `data` : package containing the data used to develop the prototype.
-* `doc` : documentation package.
+* `swiss_flows`: main project package containing all the modules.
+* `notebooks`: package containing the iPython notebooks used to develop the pipeline for each main feature, with detailed development insights. **Warning**: these notebooks may contain dirty code.
+* `spark`: code adaptation for Spark.
+* `test`: unit testing package.
+* `data`: package containing the data used to develop the prototype.
+* `doc`: documentation package.
 
 ### Dependencies
 * `pandas`
@@ -26,7 +27,7 @@ This project proposal aims to provide a high-level description of the project, b
 The approach taken is conceptual. The data or the possible solutions were not yet investigated, these are just very basic ideas of what seems to be possible.
 
 ### Abstract
-Can we get insights into high-frequency migration patterns (e.g., the “frontaliers” who commute from France to Geneva every day; Germans who commute to Zurich; etc.)? 
+Can we get insights into high-frequency migration patterns (e.g., the “frontaliers” who commute from France to Geneva every day; Germans who commute to Zurich; etc.)?
 
 Can we detect changes in migration patterns when, e.g., a new Alpine tunnel gets opened (e.g., according to [this](http://www.nzz.ch/tessin/der-polentagraben-lockt-1.18108822) NZZ article, the Gotthard in particular is expected to be a game changer for the relations between the German and Italian parts of CH)?
 
@@ -38,7 +39,7 @@ The data will mainly consists in Twitter data from the year 2012. This dataset r
 The main risk is to realize that the data doesn't contain enough relevant information for our purpose. Indeed, the analysis of the tweet locations could lead us to the conclusion that no substantial relation can be shown through this particular data, thus making it impossible for us to deduce any relevant mobility flows.
 
 #### Feasibility
-However, we can imagine that the feasibility of the project is reasonnable given the amount of available data. 
+However, we can imagine that the feasibility of the project is reasonnable given the amount of available data.
 Besides, Big Data processing is possible with the hardware resources provided by the course staff.
 
 
