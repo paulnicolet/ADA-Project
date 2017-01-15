@@ -53,7 +53,7 @@ def filter_users(clean_tweets_path, save=False, tosave_path=None):
 		The dictionnary of tweets mapped to their user.
 	"""
 	# Load the clean tweets
-	df = pd.read_csv(clean_tweets_path)
+	df = pd.read_csv(clean_tweets_path, parse_dates=[2])
 
 	# Group by user id
 	grouped = df.groupby('userId')

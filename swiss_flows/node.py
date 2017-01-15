@@ -74,7 +74,7 @@ class Node:
 
     @staticmethod
     def generate_nodes(n_swiss_nodes=10,
-                       n_foreign_nodes=10,
+                       n_foreign_nodes=2,
                        pop_threshold=15000,
                        save=False):
         """
