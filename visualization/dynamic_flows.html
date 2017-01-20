@@ -6,11 +6,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
 
     <!-- BOOTSTRAP -->
-    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <!-- jQuery library -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
@@ -18,6 +15,10 @@
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
     <script src="//code.jquery.com/jquery-1.12.4.js"></script>
     <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!-- MAP -->
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script type="text/javascript" src="js/draw.js"></script>
 
     <!-- CUSTOM -->
     <link rel="stylesheet" href="css/style.css">
@@ -33,10 +34,10 @@
         <hr>
 
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="variable-name">Variable 1</div>
           </div>
-          <div class="col-md-8">
+          <div class="col-md-7">
             <div id="slider_1"></div>
           </div>
           <div class="col-md-1">
@@ -44,21 +45,34 @@
           </div>
         </div>
         <div class="row">
-          <div class="col-md-3">
+          <div class="col-md-4">
             <div class="variable-name">Variable 2</div>
           </div>
-          <div class="col-md-8">
+          <div class="col-md-7">
             <div id="slider_2"></div>
           </div>
           <div class="col-md-1">
           <div id="slider_2_value">0</div>
           </div>
         </div>
+        <div class="row" id="filling-row">
+          
+        </div>
         
       </div>
 
       <div class="col-md-8" id="swiss_flows">
-        <img src="http://placehold.it/350x150">
+        <script type="text/javascript">
+          /*
+            Note: JSON files can not be loaded locally in the browser for security reasons.
+                  In order to load the JSON file, create a server: python -m http.server [PORT #]
+                  in the directory where the html file resides, and then go to localhost:[PORT #].
+                  This version will work since the server uses http.
+            */
+
+          // Load the map and draw the visualization
+          d3.json("world_countries.json", draw);
+        </script>
       </div>
     
     </div>

@@ -1,9 +1,9 @@
 function draw(geo_data) {
 
   "use strict";
-  var margin = 75,
-      width = 1400 - margin,
-      height = 600 - margin;
+  var margin = 0,
+      width = 960 - margin,
+      height = 850 - margin;
 
   var svg = d3.select("body")
       .append("svg")
@@ -13,8 +13,8 @@ function draw(geo_data) {
       .attr('class', 'map');
 
   var projection = d3.geo.mercator()
-                         .scale(5000)
-                         .center([9.02667, 46.40111]) // because of scroll, not perfectly centered on CH
+                         .scale(9000)
+                         .center([8.03667, 46.70111]) // because of scroll, not perfectly centered on CH
                          .translate( [width / 2, height / 2]);
 
   var path = d3.geo.path().projection(projection);
@@ -24,7 +24,7 @@ function draw(geo_data) {
                .enter()
                .append('path')
                .attr('d', path)
-               .style('fill', 'lightBlue')
+               .style('fill', 'white')
                .style('stroke', 'black')
                .style('stroke-width', 0.5);
 

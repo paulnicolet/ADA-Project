@@ -1,4 +1,17 @@
+body {
+	font-family: 'Roboto', sans-serif;
+}
+
 .variable-name {
-	font-family: 'Raleway', sans-serif;
+	font-family: 'Roboto', sans-serif;
 	font-size: 20px;
+}
+
+#sidebar {
+	background-color: #37474F;
+	color: white;
+}
+
+#filling-row {
+	height: 700px;
 }
