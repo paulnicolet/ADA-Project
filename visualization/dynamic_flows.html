@@ -37,25 +37,43 @@
             <div class="variable-name">Variable 1</div>
           </div>
           <div class="col-md-8">
-            <div id="slider"></div>
+            <div id="slider_1"></div>
           </div>
           <div class="col-md-1">
           <div id="slider_1_value">0</div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-3">
+            <div class="variable-name">Variable 2</div>
+          </div>
+          <div class="col-md-8">
+            <div id="slider_2"></div>
+          </div>
+          <div class="col-md-1">
+          <div id="slider_2_value">0</div>
+          </div>
+        </div>
         
       </div>
+
       <div class="col-md-8" id="swiss_flows">
         <img src="http://placehold.it/350x150">
       </div>
+    
     </div>
 
     <script>
-      $( "#slider" ).slider({
+      $("#slider_1").slider({
         change: function( event, ui ) {
-          var value = $("#slider").slider( "option", "value" );
+          var value = $("#slider_1").slider( "option", "value" );
           $("#slider_1_value").html(value);
-          console.log(value);
+        }
+      });
+      $("#slider_2").slider({
+        change: function( event, ui ) {
+          var value = $("#slider_2").slider( "option", "value" );
+          $("#slider_2_value").html(value);
         }
       });
     </script>
