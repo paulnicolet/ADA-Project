@@ -4,6 +4,8 @@
 <head>
 
     <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+
+    <!-- BOOTSTRAP -->
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <!-- jQuery library -->
@@ -11,6 +13,13 @@
     <!-- Latest compiled JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+    <!-- JQUERY SLIDER -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+    <!-- CUSTOM -->
     <link rel="stylesheet" href="css/style.css">
 
 </head>
@@ -22,12 +31,13 @@
           <h2 class="text-uppercase text-center">Swiss Flows</h2>
         </div>
         <hr>
+
         <div class="row">
           <div class="col-md-3">
             <div class="variable-name">Variable 1</div>
           </div>
           <div class="col-md-9">
-            
+            <div id="slider"></div>
           </div>
         </div>
         
@@ -36,6 +46,10 @@
         <img src="http://placehold.it/350x150">
       </div>
     </div>
+
+    <script>
+      $( "#slider" ).slider();
+    </script>
 
   </body>
 </html>
