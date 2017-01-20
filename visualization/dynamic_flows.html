@@ -48,7 +48,12 @@
     </div>
 
     <script>
-      $( "#slider" ).slider();
+      $( "#slider" ).slider({
+        change: function( event, ui ) {
+          var value = $("#slider").slider( "option", "value" );
+          console.log(value);
+        }
+      });
     </script>
 
   </body>
