@@ -80,12 +80,16 @@
 
     <script>
       $("#slider_1").slider({
+        min: 1,
+        max: 3,
         change: function( event, ui ) {
           var value = $("#slider_1").slider( "option", "value" );
           $("#slider_1_value").html(value);
         }
       });
       $("#slider_2").slider({
+        min: 0,
+        max: 1,
         change: function( event, ui ) {
           var value = $("#slider_2").slider( "option", "value" );
           $("#slider_2_value").html(value);
