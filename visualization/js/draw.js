@@ -1,4 +1,4 @@
-function draw(geo_data) {
+function draw(geo_data, current_filename) {
 
   "use strict";
   var margin = 0,
@@ -83,62 +83,6 @@ function draw(geo_data) {
   }
 
   function plot_flows(data) {
-      
-      // Find the maximum weight among all nodes 
-      var weight_max = d3.max(data, function(node) {
-          return node['weight'];
-      });
-
-      // Scale the radius so that circles are visible if if they have extreme weights 
-      var radius = d3.scale.sqrt()
-                     .domain([0, weight_max])
-                     .range([0, 15]);
-
-      // Draw circles
-      svg.append('svg')
-         .attr("class", "bubble")
-         .selectAll("circle")
-         .data(data)
-         .enter()
-         .append("circle")
-         .attr('cx', function(node) { 
-            return projection([node['longitude'], node['latitude']])[0]; 
-          })
-         .attr('cy', function(node) { 
-            return projection([node['longitude'], node['latitude']])[1]; 
-          })
-         .attr('r', function(node) {
-              return radius(node['weight']);
-         })
-         .attr('fill', 'rgb(247, 148, 32)')
-         .attr('stroke', 'black')
-         .attr('stroke-width', 0.7)
-         .attr('opacity', 0.7);
-
-      // Write node name on top
-      svg.selectAll("text")
-         .data(data)
-         .enter()
-         .append("text")
-         .attr("x", function(node) { 
-           // The node's name is placed on its right side 
-           return projection([node['longitude'], node['latitude']])[0] + radius(node['weight']) + 1; 
-         })
-         .attr("y", function(node) {  
-           return projection([node['longitude'], node['latitude']])[1];
-         })
-         .text( function (node) { 
-          return node['name']; 
-         })
-         .attr("font-family", "sans-serif")
-         .attr("font-size", "5px")
-         .attr("fill", "black");
-         
-  }
-
-  function plot_flows(data) {
-
-    console.log(data);
 
     // Define the reusable arrow tip
     svg.append("svg:defs") 
@@ -182,7 +126,7 @@ function draw(geo_data) {
   }, plot_points);
 
   // Load the flows and plot them 
-  d3.tsv("dummy_flows.tsv", function(d) {
+  d3.tsv(current_filename, function(d) {
     return d;
   }, plot_flows);
 
