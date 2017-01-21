@@ -1,3 +1,4 @@
+from utils import pickle_try_load
 from haversine import haversine
 import pandas as pd
 import pickle
@@ -101,7 +102,7 @@ class Node:
                                 name)
 
         # Check if the file already exists
-        nodes = Node.__pickle_try_load(filepath)
+        nodes = pickle_try_load(filepath)
         if nodes:
             return nodes
 
@@ -175,7 +176,7 @@ class Node:
                                 name)
 
         # Check if the file already exists
-        nodes = Node.__pickle_try_load(filepath)
+        nodes = pickle_try_load(filepath)
         if nodes:
             return nodes
 
@@ -275,17 +276,6 @@ class Node:
             best_dst = dst if dst < best_dst else best_dst
 
             return best_dst
-
-    @staticmethod
-    def __pickle_try_load(filepath):
-        """ Look if the file already exists. """
-        try:
-            with open(filepath, 'rb') as file:
-                warnings.warn('File already exists, importing ...', UserWarning)
-                nodes = pickle.load(file)
-            return nodes
-        except FileNotFoundError:
-                return None
 
     def __str__(self):
         return '[Node] {}, {}, {}, {}, {} km, {} people'.format(self.name,
