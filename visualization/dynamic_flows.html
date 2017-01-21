@@ -55,6 +55,7 @@
           <div id="slider_2_value">0</div>
           </div>
         </div>
+        <input type="button" value="Reload" id="reload_button"/>
         <div class="row" id="filling-row">
           
         </div>
@@ -89,6 +90,9 @@
           var value = $("#slider_2").slider( "option", "value" );
           $("#slider_2_value").html(value);
         }
+      });
+      $("#reload_button").click(function() {
+        alert("Clicked!");
       });
     </script>
 
