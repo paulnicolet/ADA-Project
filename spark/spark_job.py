@@ -1,7 +1,7 @@
-from pyspark import SparkContext, SparkConf
-from pyspark.sql import SQLContext
+from pyspark import SparkContext
 import pickle
 import itertools
+import os
 import sys
 sys.path.append('../swiss_flows')
 from node import Node
@@ -13,6 +13,9 @@ def main():
     # TODO clean_tweets()   --> save it to HDFS
     # TODO filter_users()   --> save it to HDFS
     # TODO generate_nodes() --> save it to HDFS
+
+
+    # Path to write to HDFS : 'hdfs://iccluster046.iccluster.epfl.ch/user/pnicolet/test.txt'
 
     with open('../data/filtered_users.pkl', 'rb') as file:
         user_tweets = pickle.load(file)
@@ -120,9 +123,9 @@ def by_interval_len(tweet_tuple):
     return t2[1].to_pydatetime() - t1[1].to_pydatetime()
 
 if __name__ == '__main__':
-    pyfiles = ['/Users/paulnicolet/Local_Documents/ADA/ADA-Project/swiss_flows/flow.py',
-                '/Users/paulnicolet/Local_Documents/ADA/ADA-Project/swiss_flows/node.py']
+    base = [os.path.abspath(os.path.dirname(__file__)), os.path.pardir, 'swiss_flows']
+    files = [os.path.join(*base.append('flow.py')),
+               os.path.join(*base.append('node.py'))]
 
-    sc = SparkContext(pyFiles=pyfiles)
-    #sqlContext = SQLContext(sc)
+    sc = SparkContext(pyFiles=files)
     main()

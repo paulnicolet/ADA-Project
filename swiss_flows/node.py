@@ -1,9 +1,10 @@
+from haversine import haversine
 import pandas as pd
 import pickle
 import warnings
-from haversine import haversine
 import operator
 import collections
+import os
 
 class Node:
     """
@@ -92,8 +93,12 @@ class Node:
         Returns:
             list of nodes
         """
-        base = '../data/nodes/nodes_{}_{}.pkl'
-        filepath = base.format(n_swiss_nodes, n_foreign_nodes)
+        name = 'nodes_{}_{}.pkl'.format(n_swiss_nodes, n_foreign_nodes)
+        filepath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                os.path.pardir,
+                                'data',
+                                'nodes',
+                                name)
 
         # Check if the file already exists
         nodes = Node.__pickle_try_load(filepath)
@@ -162,7 +167,12 @@ class Node:
         Returns:
             list of nodes
         """
-        filepath = '../data/nodes/swiss_nodes_{}.pkl'.format(n_nodes)
+        name = 'swiss_nodes_{}.pkl'.format(n_nodes)
+        filepath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                os.path.pardir,
+                                'data',
+                                'nodes',
+                                name)
 
         # Check if the file already exists
         nodes = Node.__pickle_try_load(filepath)
@@ -211,12 +221,15 @@ class Node:
             Pandas Dataframe with cities.
         """
         # Import data
-        FILE_BASE = '../data/geonames/{}/{}.txt'
-        df = pd.read_csv(FILE_BASE.format(country_code, country_code),
-                         header=None,
-                         encoding='utf8',
-                         delimiter='\t',
-                         dtype={9: str})
+        name = '{}.txt'.format(country_code)
+        filepath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                os.path.pardir,
+                                'data',
+                                'geonames',
+                                country_code,
+                                name)
+
+        df = pd.read_csv(filepath, header=None, encoding='utf8', delimiter='\t')
 
         # Build the index
         index = ['geonameid', 'name', 'asciiname', 'alternatenames',
