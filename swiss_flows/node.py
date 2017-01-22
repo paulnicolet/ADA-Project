@@ -1,14 +1,15 @@
+from utils import pickle_try_load
+from haversine import haversine
 import pandas as pd
 import pickle
 import warnings
-from haversine import haversine
 import operator
 import collections
+import os
 
 class Node:
     """
     Represents a node, a city.
-
     Parameters:
         name name of the Node
         position (latitude, longitude)
@@ -28,10 +29,8 @@ class Node:
     def weight_nodes(weighted_flows):
         """
         Attribute a weight to each node (mainly for the visualization).
-
         Parameters:
             weighted_flows a list of flows, with weight.
-
         Returns:
             A list of tuple (Node, weight), sorted by weight in descending order.
         """
@@ -50,11 +49,9 @@ class Node:
     def locate_point(point, nodes):
         """
         Find the best corresponding node to the point in the given list.
-
         Parameters:
             point Point to evaluate.
             nodes List of nodes.
-
         Returns:
             The best node in the list or None if not considered in a node.
         """
@@ -83,20 +80,22 @@ class Node:
         in the data/ directory.
         If the file already exists, simply return the list of nodes.
         See 'foreign nodes.ypnb' notebook for the detailed process.
-
         Parameters:
             n_swiss_nodes Number of swiss nodes to generate.
             n_foreign_nodes Number of node to generate for each foreign country.
             pop_threshold Population threshold for foreign cities.
-
         Returns:
             list of nodes
         """
-        base = '../data/nodes/nodes_{}_{}.pkl'
-        filepath = base.format(n_swiss_nodes, n_foreign_nodes)
+        name = 'nodes_{}_{}.pkl'.format(n_swiss_nodes, n_foreign_nodes)
+        filepath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                os.path.pardir,
+                                'data',
+                                'nodes',
+                                name)
 
         # Check if the file already exists
-        nodes = Node.__pickle_try_load(filepath)
+        nodes = pickle_try_load(filepath)
         if nodes:
             return nodes
 
@@ -155,17 +154,20 @@ class Node:
         and save it to a file swiss_nodes_<n_nodes>.pkl in the data/ directory.
         If the file already exists, simply return the list of nodes.
         See 'nodes.ypnb' notebook for the detailed process.
-
         Parameters:
             n_nodes Number of nodes to generate.
-
         Returns:
             list of nodes
         """
-        filepath = '../data/nodes/swiss_nodes_{}.pkl'.format(n_nodes)
+        name = 'swiss_nodes_{}.pkl'.format(n_nodes)
+        filepath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                os.path.pardir,
+                                'data',
+                                'nodes',
+                                name)
 
         # Check if the file already exists
-        nodes = Node.__pickle_try_load(filepath)
+        nodes = pickle_try_load(filepath)
         if nodes:
             return nodes
 
@@ -203,20 +205,21 @@ class Node:
     def import_country(country_code):
         """
         Import the country data, clean it and keep the cities.
-
         Parameters:
             country_code For example CH, or FR...
-
         Returns:
             Pandas Dataframe with cities.
         """
         # Import data
-        FILE_BASE = '../data/geonames/{}/{}.txt'
-        df = pd.read_csv(FILE_BASE.format(country_code, country_code),
-                         header=None,
-                         encoding='utf8',
-                         delimiter='\t',
-                         dtype={9: str})
+        name = '{}.txt'.format(country_code)
+        filepath = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                os.path.pardir,
+                                'data',
+                                'geonames',
+                                country_code,
+                                name)
+
+        df = pd.read_csv(filepath, header=None, encoding='utf8', delimiter='\t')
 
         # Build the index
         index = ['geonameid', 'name', 'asciiname', 'alternatenames',
@@ -262,17 +265,6 @@ class Node:
             best_dst = dst if dst < best_dst else best_dst
 
             return best_dst
-
-    @staticmethod
-    def __pickle_try_load(filepath):
-        """ Look if the file already exists. """
-        try:
-            with open(filepath, 'rb') as file:
-                warnings.warn('File already exists, importing ...', UserWarning)
-                nodes = pickle.load(file)
-            return nodes
-        except FileNotFoundError:
-                return None
 
     def __str__(self):
         return '[Node] {}, {}, {}, {}, {} km, {} people'.format(self.name,
