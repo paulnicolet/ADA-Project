@@ -95,7 +95,8 @@ function draw(geo_data, current_filename) {
         .attr("orient", "auto") 
         .append("path")
         .attr("d", "M 0 0 12 6 0 12 3 6") 
-        .style("fill", "black"); 
+        .attr("opacity", 0.5)
+        .style("fill", "blue"); 
 
     // Plot the lines programatically
     svg.selectAll("line")
@@ -124,8 +125,11 @@ function draw(geo_data, current_filename) {
        .attr("y2", function(flow) {  
          return projection([flow['dest_longitude'], flow['dest_latitude']])[1];
        })
-       .attr("stroke-width", 1)
-       .attr("stroke", "black")
+       .attr("stroke-width", function(flow) {
+         return flow['weight'] / 5;
+       })
+       .attr("stroke", "blue")
+       .style("stroke-opacity", 0.5)
        .attr("marker-end", "url(#triangle)");
 
   }
