@@ -103,7 +103,7 @@ function draw(geo_data, current_filename) {
        .enter()
        .append("line")
        .attr("x1", function(flow) { 
-         return projection([flow['src_longitude'], flow['src_latitude']])[0]; 
+         return projection([flow['src_longitude'], flow['src_latitude']])[0] - 5; 
        })
        .attr("y1", function(flow) {  
          return projection([flow['src_longitude'], flow['src_latitude']])[1];
