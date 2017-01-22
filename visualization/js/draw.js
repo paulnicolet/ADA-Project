@@ -77,7 +77,7 @@ function draw(geo_data, current_filename) {
           return node['name']; 
          })
          .attr("font-family", "sans-serif")
-         .attr("font-size", "5px")
+         .attr("font-size", "15px")
          .attr("fill", "black");
          
   }
