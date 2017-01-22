@@ -103,13 +103,23 @@ function draw(geo_data, current_filename) {
        .enter()
        .append("line")
        .attr("x1", function(flow) { 
-         return projection([flow['src_longitude'], flow['src_latitude']])[0] - 5; 
+         var orientation = flow['src_longitude'] - flow['dest_longitude'];
+         if(orientation < 0) {
+          return projection([flow['src_longitude'], flow['src_latitude']])[0] - 5; 
+         } else {
+          return projection([flow['src_longitude'], flow['src_latitude']])[0] + 5;
+         }
        })
        .attr("y1", function(flow) {  
          return projection([flow['src_longitude'], flow['src_latitude']])[1];
        })
        .attr("x2", function(flow) {  
-         return projection([flow['dest_longitude'], flow['dest_latitude']])[0];
+         var orientation = flow['src_longitude'] - flow['dest_longitude'];
+         if(orientation < 0) {
+          return projection([flow['dest_longitude'], flow['dest_latitude']])[0] - 5; 
+         } else {
+          return projection([flow['dest_longitude'], flow['dest_latitude']])[0] + 5;
+         }
        })
        .attr("y2", function(flow) {  
          return projection([flow['dest_longitude'], flow['dest_latitude']])[1];
