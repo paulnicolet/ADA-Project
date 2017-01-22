@@ -44,15 +44,15 @@ class Flow:
             directed    Choice to detect directed or undirected flows.
 
         Returns:
-            Tuple (user_id, flows) with flows a dictionnary of the following
+            List of tuples (flow, attr) with attr a dictionnary of the following
             form :
-            {Flow: {weight: ...,
-                    start: ...,
-                    end: ...,
-                    intervals: ...}}
+            {weight: ...,
+             start: ...,
+             end: ...,
+             intervals: ...}
 
             Note: the result is returned as a dictionnary in the notebook.
-            The tuple form is just a convenience for Spark adaptation.
+            The tuple form is just a convenience for Spark map/reduce model.
         """
         # Generate all possible pairs of tweet sorted by interval length
         pairs = sorted(list(itertools.combinations(tweets, 2)),
@@ -128,33 +128,32 @@ class Flow:
                 # In any case, add the interval we just found for later use
                 flows[flow][Flow.INTRVL_IDX].append(tweet_interval)
 
-        return (user_id, flows)
+        return flows.items()
 
     @staticmethod
-    def agg_flows(user_flows):
+    def agg_flows(flows):
         """
         Aggregate flows. See notebooks/detection.ypnb for more details.
 
         Paramters:
-            user_flows List of tuple (user_id, flows)
+            flows List of tuple (flows, {weight, start...})
 
         Returns:
             Sorted list of flows.
         """
         agg_flows = {}
 
-        for user, flows in user_flows:
-            for flow, attr in flows.items():
-                if flow not in agg_flows:
-                    agg_flows[flow] = {Flow.WEIGHT_IDX: attr[Flow.WEIGHT_IDX],
-                                       Flow.START_IDX: attr[Flow.START_IDX],
-                                       Flow.END_IDX: attr[Flow.END_IDX]}
-                else:
-                    agg_flows[flow][Flow.WEIGHT_IDX] += attr[Flow.WEIGHT_IDX]
-                    agg_flows[flow][Flow.START_IDX] = min(agg_flows[flow][Flow.START_IDX],
-                                                          attr[Flow.START_IDX])
-                    agg_flows[flow][Flow.END_IDX] = min(agg_flows[flow][Flow.END_IDX],
-                                                        attr[Flow.END_IDX])
+        for flow, attr in flows:
+            if flow not in agg_flows:
+                agg_flows[flow] = {Flow.WEIGHT_IDX: attr[Flow.WEIGHT_IDX],
+                                   Flow.START_IDX: attr[Flow.START_IDX],
+                                   Flow.END_IDX: attr[Flow.END_IDX]}
+            else:
+                agg_flows[flow][Flow.WEIGHT_IDX] += attr[Flow.WEIGHT_IDX]
+                agg_flows[flow][Flow.START_IDX] = min(agg_flows[flow][Flow.START_IDX],
+                                                      attr[Flow.START_IDX])
+                agg_flows[flow][Flow.END_IDX] = min(agg_flows[flow][Flow.END_IDX],
+                                                    attr[Flow.END_IDX])
 
 
         final_flows = []
