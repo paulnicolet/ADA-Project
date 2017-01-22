@@ -28,34 +28,31 @@
 
     <div>
       <div class="col-md-4" id="sidebar">
-        <div class="row">
-          <h2 class="text-uppercase text-center">Swiss Flows</h2>
-        </div>
-        <hr>
-
-        <div class="row">
+        <div class="row variable-row" style="padding-top: 40px;">
           <div class="col-md-4">
             <div class="variable-name">Variable 1</div>
           </div>
-          <div class="col-md-7">
+          <div class="col-md-7 slider-col">
             <div id="slider_1"></div>
           </div>
           <div class="col-md-1">
           <div id="slider_1_value">0</div>
           </div>
         </div>
-        <div class="row">
+        <div class="row variable-row">
           <div class="col-md-4">
             <div class="variable-name">Variable 2</div>
           </div>
-          <div class="col-md-7">
+          <div class="col-md-7 slider-col">
             <div id="slider_2"></div>
           </div>
           <div class="col-md-1">
           <div id="slider_2_value">0</div>
           </div>
         </div>
-        <input class="ui-button ui-widget ui-corner-all" type="submit" value="Reload" id="reload_button">
+        <div class="row" id="reload-row">
+          <input class="ui-button ui-widget ui-corner-all" type="submit" value="Reload" id="reload_button">
+        </div>
         <div class="row" id="filling-row">
           
         </div>
