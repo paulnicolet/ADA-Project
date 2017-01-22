@@ -45,11 +45,7 @@ class Flow:
 
         Returns:
             List of tuples (flow, attr) with attr a dictionnary of the following
-            form :
-            {weight: ...,
-             start: ...,
-             end: ...,
-             intervals: ...}
+            form : {weight: ..., start: ..., end: ..., intervals: ...}
 
             Note: the result is returned as a dictionnary in the notebook.
             The tuple form is just a convenience for Spark map/reduce model.
@@ -128,12 +124,13 @@ class Flow:
                 # In any case, add the interval we just found for later use
                 flows[flow][Flow.INTRVL_IDX].append(tweet_interval)
 
-        return flows.items()
+        return list(flows.items())
 
     @staticmethod
     def agg_flows(flows):
         """
-        Aggregate flows. See notebooks/detection.ypnb for more details.
+        Aggregate flows iteratively.
+        See notebooks/detection.ypnb for more details.
 
         Paramters:
             flows List of tuple (flows, {weight, start...})
@@ -169,6 +166,22 @@ class Flow:
         return final_flows
 
     @staticmethod
+    def reduce_flows_helper(attr1, attr2):
+        """
+        Helper function for Spark reduceByKey() function.
+        Define the reduction of two flows from attributes of the form:
+             {weight: ..., start: ..., end: ..., intervals: ...}
+
+        Parameters:
+            attr1 Attributes of the first flow.
+            attr2 Attributes of the second flow.
+
+        Returns
+            Dictionnary of merged attributes.
+        """
+        pass
+
+    @staticmethod
     def is_overlapping(i1, i2):
         """
         Returns True if the intervals are overlapping.
@@ -184,7 +197,7 @@ class Flow:
     @property
     def symmetrical(self):
         """
-        Return the symetrical flow
+        Returns the symetrical flow
         """
         return Flow(src=self.dst, dst=self.src, directed=self.directed)
 
