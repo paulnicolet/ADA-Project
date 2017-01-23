@@ -17,13 +17,26 @@ def main():
     nodes = sc.broadcast(Node.generate_nodes(n_swiss_nodes=10,
                                              n_foreign_nodes=1,
                                              pop_threshold=15000))
+    detect_interval = 2
+    directed = False
 
-
+    # RDD (user_id, [tweets])
     user_tweets = sc.parallelize(list(user_tweets.items()))
 
-    flows = user_tweets.map(lambda x: Flow.infer_flows(x[0], x[1], nodes.value, 2, False))
+    # Detect tweets on each cluster machine
+    flows = user_tweets.flatMap(lambda x: Flow.infer_flows(x[0], x[1], nodes.value, detect_interval, directed))
 
-    #agg_flows = flows.reduceByKey(Flow.reduce_flows_helper)
+    # Aggregate results for each Flow
+    agg_flows = flows.reduceByKey(Flow.reduce_flows_helper)
+
+    # Build the final Flow objects from attributes
+    final_flows = agg_flows.map(lambda x: Flow.build_final_flows(x[0], x[1]))
+
+    #print(agg_flows.take(5))
+    result = sorted(final_flows.collect(), reverse=True, key=lambda x: x.weight)
+
+    for flow in result:
+        print(flow)
 
     # TODO Save agg flows to HDFS.
 

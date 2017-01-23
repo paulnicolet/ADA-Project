@@ -17,6 +17,7 @@ class Flow:
     END_IDX = 'end'
     INTRVL_IDX = 'intervals'
 
+
     def __init__(self, src, dst, directed=False):
         self.src = src
         self.dst = dst
@@ -29,6 +30,7 @@ class Flow:
         if not directed and src.name > dst.name:
                 self.src = dst
                 self.dst = src
+
 
     @staticmethod
     def infer_flows(user_id, tweets, nodes, delta_t, directed):
@@ -126,6 +128,7 @@ class Flow:
 
         return list(flows.items())
 
+
     @staticmethod
     def agg_flows(flows):
         """
@@ -165,6 +168,7 @@ class Flow:
 
         return final_flows
 
+
     @staticmethod
     def reduce_flows_helper(attr1, attr2):
         """
@@ -179,7 +183,37 @@ class Flow:
         Returns
             Dictionnary of merged attributes.
         """
-        pass
+        merged = {}
+
+        # Take the sum of the weights
+        merged[Flow.WEIGHT_IDX] = attr1[Flow.WEIGHT_IDX] + attr2[Flow.WEIGHT_IDX]
+
+        # Take the minimum of the start dates
+        merged[Flow.START_IDX] = min(attr1[Flow.START_IDX], attr2[Flow.START_IDX])
+
+        # Take the maximum of the end dates
+        merged[Flow.END_IDX] = max(attr1[Flow.END_IDX], attr2[Flow.END_IDX])
+
+        return merged
+
+
+    @staticmethod
+    def build_final_flows(flow, attributes):
+        """
+        Update the Flow object from given attributes.
+
+        Parameters:
+            flow        The flow object to update.
+            attributes  The attributes to use to update the flow.
+
+        Returns:
+            The update Flow object.
+        """
+        flow.weight     = attributes[Flow.WEIGHT_IDX]
+        flow.start_date = attributes[Flow.START_IDX]
+        flow.end_date   = attributes[Flow.END_IDX]
+
+        return flow
 
     @staticmethod
     def is_overlapping(i1, i2):
@@ -194,12 +228,14 @@ class Flow:
         """
         return (i1[0] < i2[0] < i1[1]) or (i2[0] < i1[0] < i2[1])
 
+
     @property
     def symmetrical(self):
         """
         Returns the symetrical flow
         """
         return Flow(src=self.dst, dst=self.src, directed=self.directed)
+
 
     @staticmethod
     def _by_interval_len(tweet_tuple):
@@ -213,6 +249,7 @@ class Flow:
         # Return the length of the interval
         return t2[1].to_pydatetime() - t1[1].to_pydatetime()
 
+
     def __str__(self):
         link = '-->' if self.directed else '<-->'
         template = '[Flow] {} {} {} (weight: {}, start: {}, end: {}).'
@@ -223,6 +260,7 @@ class Flow:
                                self.start_date,
                                self.end_date)
 
+
     def __eq__(self, other):
         cond = (self.src == other.src and
                 self.dst == other.dst and
@@ -230,11 +268,6 @@ class Flow:
 
         return isinstance(other, type(self)) and cond
 
-    def __lt__(self, other):
-        return self.src.name < other.src.name
-
-    def __gt__(self, other):
-        return not self.__lt__(other)
 
     def __hash__(self):
         mod = 1231 if self.directed else 1237
