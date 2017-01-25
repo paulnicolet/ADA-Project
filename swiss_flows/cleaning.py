@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import pickle
+import json
 import csv
 
 def clean_tweets(file_path, tosave_path):
@@ -40,7 +41,7 @@ def clean_tweets(file_path, tosave_path):
 
 	return df
 
-def filter_users(clean_tweets_path, save=False, tosave_path=None):
+def filter_users(clean_tweets_path, save=False, tosave_path=None, tosave_format='pickle'):
 	"""
 	Keep only users with more than one tweet and save them
 	as a dictionnary of the form {'user_id': [list of tweets]}
@@ -66,8 +67,13 @@ def filter_users(clean_tweets_path, save=False, tosave_path=None):
 			user_tweets[user] = tweets.drop('userId', axis=1).values.tolist()
 
 	if save:
-		# Save the result
-		with open(tosave_path + '.pkl', 'wb') as file:
-			pickle.dump(user_tweets, file)
+		if tosave_format == 'pickle':
+			with open(tosave_path + '.pkl', 'wb') as file:
+				pickle.dump(user_tweets, file)
+
+		elif tosave_format == 'json':
+			data = list(map(lambda x: {'userId': x[0], 'tweets': x[1]}, user_tweets.items()))
+			with open(tosave_path + '.json', 'w') as file:
+				json.dump(data, file, default=str)
 
 	return user_tweets
