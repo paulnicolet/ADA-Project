@@ -1,27 +1,39 @@
 from pyspark import SparkContext
 from pyspark.sql import SQLContext
-import pandas as pd
-import pickle
 import json
-import itertools
 import os
 import sys
 sys.path.append('../swiss_flows')
 from node import Node
 from flow import Flow
+from utils import convert_tweet_types
 
 def main():
     # Import the tweets and transform the data
     df = sqlContext.read.json(os.path.join(PATH_BASE, 'filtered_users.json'))
-    map_row = lambda row: (row.userId, list(map(_convert_types, row.tweets)))
+    map_row = lambda row: (row.userId, list(map(convert_tweet_types, row.tweets)))
     user_tweets = df.rdd.map(map_row)
 
-    # Generate nodes as a broadcast variable
-    nodes = sc.broadcast(Node.generate_nodes(n_swiss_nodes=10,
-                                             n_foreign_nodes=1,
-                                             pop_threshold=15000))
-    detect_interval = 2
-    directed = False
+    # Parameters declaration
+    node_params = [(10, 1, 15000)]
+    detect_interval_params = [2]
+    directed_params = [False]
+
+    for n_swiss_nodes, n_foreign_nodes, pop_threshold in node_params:
+        # Generate nodes as a broadcast variable
+        # Avoid generating nodes for each subtask
+        nodes = sc.broadcast(Node.generate_nodes(n_swiss_nodes=n_swiss_nodes,
+                                                 n_foreign_nodes=n_foreign_nodes,
+                                                 pop_threshold=pop_threshold))
+
+        for detect_interval in detect_interval_params:
+            for directed in directed_params:
+                nodes_params = (n_swiss_nodes, n_foreign_nodes, pop_threshold)
+                run_task(user_tweets, nodes, nodes_params, detect_interval, directed)
+
+
+def run_task(user_tweets, nodes, nodes_params, detect_interval, directed):
+    """ Parallelize the flow detection algorithm for a given set of parameters."""
 
     # Detect tweets on each cluster machine
     flows = user_tweets.flatMap(lambda x: Flow.infer_flows(x[0], x[1], nodes.value, detect_interval, directed))
@@ -38,17 +50,15 @@ def main():
     weighted_nodes = weighted_nodes.map(lambda x: {'node': x[0], 'weight': x[1]})
 
     # Save the results
+    filename = '_{}_{}_{}_{}_{}.json'.format(nodes_params[0],
+                                             nodes_params[1],
+                                             nodes_params[2],
+                                             detect_interval,
+                                             directed)
     json_mapper = lambda x: json.dumps(x, default=lambda y: y.json)
-    final_flows.map(json_mapper).saveAsTextFile(os.path.join(PATH_BASE, 'results', 'final_flows.json'))
-    weighted_nodes.map(json_mapper).saveAsTextFile(os.path.join(PATH_BASE, 'results', 'final_nodes.json'))
+    final_flows.map(json_mapper).saveAsTextFile(os.path.join(PATH_BASE, 'results', 'flows' + filename))
+    weighted_nodes.map(json_mapper).saveAsTextFile(os.path.join(PATH_BASE, 'results', 'nodes' + filename))
 
-
-def _convert_types(tweet):
-    tweet[1] =  pd.Timestamp(tweet[1])
-    tweet[2] = float(tweet[2])
-    tweet[3] = float(tweet[3])
-
-    return tweet
 
 # Constants set up
 LOCAL = True
