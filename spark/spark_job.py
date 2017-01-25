@@ -31,11 +31,19 @@ def main():
     # Build the final Flow objects from attributes
     final_flows = agg_flows.map(lambda x: Flow.build_final_flows(x[0], x[1]))
 
-    #print(agg_flows.take(5))
-    result = sorted(final_flows.collect(), reverse=True, key=lambda x: x.weight)
+    # Generate node weights
+    weighted_nodes = final_flows.flatMap(lambda x: [(x.src, x.weight), (x.dst, x.weight)])
+    weighted_nodes = weighted_nodes.reduceByKey(lambda a, b: a + b)
 
-    for flow in result:
+    # Collect resultsc
+    result_flows = sorted(final_flows.collect(), reverse=True, key=lambda x: x.weight)
+    result_nodes = sorted(weighted_nodes.collect(), reverse=True, key=lambda x: x[1])
+
+    for flow in result_flows:
         print(flow)
+
+    for node, weight in result_nodes:
+        print('{} -- {}'.format(node, weight))
 
     # TODO Save agg flows to HDFS.
 
