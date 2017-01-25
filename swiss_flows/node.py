@@ -266,6 +266,10 @@ class Node:
 
             return best_dst
 
+    @property
+    def json(self):
+        return self.__dict__
+
     def __str__(self):
         return '[Node] {}, {}, {}, {}, {} km, {} people'.format(self.name,
                                                     self.country,

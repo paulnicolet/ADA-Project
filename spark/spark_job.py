@@ -2,6 +2,7 @@ from pyspark import SparkContext
 from pyspark.sql import SQLContext
 import pandas as pd
 import pickle
+import json
 import itertools
 import os
 import sys
@@ -34,18 +35,12 @@ def main():
     # Generate node weights
     weighted_nodes = final_flows.flatMap(lambda x: [(x.src, x.weight), (x.dst, x.weight)])
     weighted_nodes = weighted_nodes.reduceByKey(lambda a, b: a + b)
+    weighted_nodes = weighted_nodes.map(lambda x: {'node': x[0], 'weight': x[1]})
 
-    # Collect resultsc
-    result_flows = sorted(final_flows.collect(), reverse=True, key=lambda x: x.weight)
-    result_nodes = sorted(weighted_nodes.collect(), reverse=True, key=lambda x: x[1])
-
-    for flow in result_flows:
-        print(flow)
-
-    for node, weight in result_nodes:
-        print('{} -- {}'.format(node, weight))
-
-    # TODO Save agg flows to HDFS.
+    # Save the results
+    json_mapper = lambda x: json.dumps(x, default=lambda y: y.json)
+    final_flows.map(json_mapper).saveAsTextFile(os.path.join(PATH_BASE, 'results', 'final_flows.json'))
+    weighted_nodes.map(json_mapper).saveAsTextFile(os.path.join(PATH_BASE, 'results', 'final_nodes.json'))
 
 
 def _convert_types(tweet):

@@ -249,6 +249,15 @@ class Flow:
         # Return the length of the interval
         return t2[1].to_pydatetime() - t1[1].to_pydatetime()
 
+    @property
+    def json(self):
+        return {'src': self.src,
+                'dst': self.dst,
+                'directed': self.directed,
+                'weight': self.weight,
+                'start_date': str(self.start_date),
+                'end_date': str(self.end_date)}
+
 
     def __str__(self):
         link = '-->' if self.directed else '<-->'
