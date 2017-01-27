@@ -4,6 +4,8 @@ import pickle
 import json
 import csv
 
+MAX_FIELD_LEN = 25
+
 def clean_tweets(file_path, tosave_path):
 	"""
 	Clean the tweet data set to keep only the desired features and save the result.
@@ -35,6 +37,14 @@ def clean_tweets(file_path, tosave_path):
 	# Drop rows which have missing values in important columns
 	imp_col = ['userId', 'createdAt', 'placeLatitude', 'placeLatitude']
 	df = df.dropna(subset=imp_col, how='any')
+
+	# It turns out some rows are ill-formed for some reason
+	df = df[df['id'].apply(_filter_float)]
+	df = df[df['userId'].apply(_filter_float)]
+	df = df[df['placeLongitude'].apply(_filter_float)]
+	df = df[df['placeLatitude'].apply(_filter_float)]
+	df = df[df['createdAt'].apply(_filter_dates)]
+
 
 	# Write in a file
 	df.to_csv(tosave_path + '.csv', index=False)
@@ -77,3 +87,17 @@ def filter_users(clean_tweets_path, save=False, tosave_path=None, tosave_format=
 				json.dump(data, file, default=str)
 
 	return user_tweets
+
+def _filter_float(v):
+	try:
+		tmp = float(v)
+		return len(str(tmp)) < MAX_FIELD_LEN
+	except ValueError:
+		return False
+
+def _filter_dates(v):
+	try:
+		tmp = pd.Timestamp(v)
+		return len(str(tmp)) < MAX_FIELD_LEN
+	except ValueError:
+		return False
