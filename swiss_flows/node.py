@@ -1,5 +1,4 @@
-from utils import pickle_try_load
-from haversine import haversine
+from utils import pickle_try_load, haversine
 import pandas as pd
 import pickle
 import warnings
