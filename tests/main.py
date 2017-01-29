@@ -5,7 +5,7 @@ from node import Node
 from flow import Flow
 from cleaning import filter_users
 
-def run(custom_conf=True):
+def run(custom_conf=False):
     if custom_conf:
         conf = ask_conf()
     else:
@@ -39,7 +39,7 @@ def run(custom_conf=True):
                                nodes,
                                conf['delta_t'],
                                conf['directed'])
-        flows.append(tmp)
+        flows.extend(tmp)
 
     final_flows = Flow.agg_flows(flows)
 

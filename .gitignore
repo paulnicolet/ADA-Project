@@ -7,6 +7,7 @@
 *.csv
 *.log
 *.pkl
+*.json
 
 # Execptions
 !dummy_nodes.tsv

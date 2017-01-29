@@ -17,6 +17,7 @@ class Flow:
     END_IDX = 'end'
     INTRVL_IDX = 'intervals'
 
+
     def __init__(self, src, dst, directed=False):
         self.src = src
         self.dst = dst
@@ -29,6 +30,7 @@ class Flow:
         if not directed and src.name > dst.name:
                 self.src = dst
                 self.dst = src
+
 
     @staticmethod
     def infer_flows(user_id, tweets, nodes, delta_t, directed):
@@ -44,15 +46,11 @@ class Flow:
             directed    Choice to detect directed or undirected flows.
 
         Returns:
-            Tuple (user_id, flows) with flows a dictionnary of the following
-            form :
-            {Flow: {weight: ...,
-                    start: ...,
-                    end: ...,
-                    intervals: ...}}
+            List of tuples (flow, attr) with attr a dictionnary of the following
+            form : {weight: ..., start: ..., end: ..., intervals: ...}
 
             Note: the result is returned as a dictionnary in the notebook.
-            The tuple form is just a convenience for Spark adaptation.
+            The tuple form is just a convenience for Spark map/reduce model.
         """
         # Generate all possible pairs of tweet sorted by interval length
         pairs = sorted(list(itertools.combinations(tweets, 2)),
@@ -128,33 +126,34 @@ class Flow:
                 # In any case, add the interval we just found for later use
                 flows[flow][Flow.INTRVL_IDX].append(tweet_interval)
 
-        return (user_id, flows)
+        return list(flows.items())
+
 
     @staticmethod
-    def agg_flows(user_flows):
+    def agg_flows(flows):
         """
-        Aggregate flows. See notebooks/detection.ypnb for more details.
+        Aggregate flows iteratively.
+        See notebooks/detection.ypnb for more details.
 
         Paramters:
-            user_flows List of tuple (user_id, flows)
+            flows List of tuple (flows, {weight, start...})
 
         Returns:
             Sorted list of flows.
         """
         agg_flows = {}
 
-        for user, flows in user_flows:
-            for flow, attr in flows.items():
-                if flow not in agg_flows:
-                    agg_flows[flow] = {Flow.WEIGHT_IDX: attr[Flow.WEIGHT_IDX],
-                                       Flow.START_IDX: attr[Flow.START_IDX],
-                                       Flow.END_IDX: attr[Flow.END_IDX]}
-                else:
-                    agg_flows[flow][Flow.WEIGHT_IDX] += attr[Flow.WEIGHT_IDX]
-                    agg_flows[flow][Flow.START_IDX] = min(agg_flows[flow][Flow.START_IDX],
-                                                          attr[Flow.START_IDX])
-                    agg_flows[flow][Flow.END_IDX] = min(agg_flows[flow][Flow.END_IDX],
-                                                        attr[Flow.END_IDX])
+        for flow, attr in flows:
+            if flow not in agg_flows:
+                agg_flows[flow] = {Flow.WEIGHT_IDX: attr[Flow.WEIGHT_IDX],
+                                   Flow.START_IDX: attr[Flow.START_IDX],
+                                   Flow.END_IDX: attr[Flow.END_IDX]}
+            else:
+                agg_flows[flow][Flow.WEIGHT_IDX] += attr[Flow.WEIGHT_IDX]
+                agg_flows[flow][Flow.START_IDX] = min(agg_flows[flow][Flow.START_IDX],
+                                                      attr[Flow.START_IDX])
+                agg_flows[flow][Flow.END_IDX] = min(agg_flows[flow][Flow.END_IDX],
+                                                    attr[Flow.END_IDX])
 
 
         final_flows = []
@@ -169,6 +168,53 @@ class Flow:
 
         return final_flows
 
+
+    @staticmethod
+    def reduce_flows_helper(attr1, attr2):
+        """
+        Helper function for Spark reduceByKey() function.
+        Define the reduction of two flows from attributes of the form:
+             {weight: ..., start: ..., end: ..., intervals: ...}
+
+        Parameters:
+            attr1 Attributes of the first flow.
+            attr2 Attributes of the second flow.
+
+        Returns
+            Dictionnary of merged attributes.
+        """
+        merged = {}
+
+        # Take the sum of the weights
+        merged[Flow.WEIGHT_IDX] = attr1[Flow.WEIGHT_IDX] + attr2[Flow.WEIGHT_IDX]
+
+        # Take the minimum of the start dates
+        merged[Flow.START_IDX] = min(attr1[Flow.START_IDX], attr2[Flow.START_IDX])
+
+        # Take the maximum of the end dates
+        merged[Flow.END_IDX] = max(attr1[Flow.END_IDX], attr2[Flow.END_IDX])
+
+        return merged
+
+
+    @staticmethod
+    def build_final_flows(flow, attributes):
+        """
+        Update the Flow object from given attributes.
+
+        Parameters:
+            flow        The flow object to update.
+            attributes  The attributes to use to update the flow.
+
+        Returns:
+            The update Flow object.
+        """
+        flow.weight     = attributes[Flow.WEIGHT_IDX]
+        flow.start_date = attributes[Flow.START_IDX]
+        flow.end_date   = attributes[Flow.END_IDX]
+
+        return flow
+
     @staticmethod
     def is_overlapping(i1, i2):
         """
@@ -182,12 +228,14 @@ class Flow:
         """
         return (i1[0] < i2[0] < i1[1]) or (i2[0] < i1[0] < i2[1])
 
+
     @property
     def symmetrical(self):
         """
-        Return the symetrical flow
+        Returns the symetrical flow
         """
         return Flow(src=self.dst, dst=self.src, directed=self.directed)
+
 
     @staticmethod
     def _by_interval_len(tweet_tuple):
@@ -201,6 +249,16 @@ class Flow:
         # Return the length of the interval
         return t2[1].to_pydatetime() - t1[1].to_pydatetime()
 
+    @property
+    def json(self):
+        return {'src': self.src,
+                'dst': self.dst,
+                'directed': self.directed,
+                'weight': self.weight,
+                'start_date': str(self.start_date),
+                'end_date': str(self.end_date)}
+
+
     def __str__(self):
         link = '-->' if self.directed else '<-->'
         template = '[Flow] {} {} {} (weight: {}, start: {}, end: {}).'
@@ -211,6 +269,7 @@ class Flow:
                                self.start_date,
                                self.end_date)
 
+
     def __eq__(self, other):
         cond = (self.src == other.src and
                 self.dst == other.dst and
@@ -218,11 +277,6 @@ class Flow:
 
         return isinstance(other, type(self)) and cond
 
-    def __lt__(self, other):
-        return self.src.name < other.src.name
-
-    def __gt__(self, other):
-        return not self.__lt__(other)
 
     def __hash__(self):
         mod = 1231 if self.directed else 1237

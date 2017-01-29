@@ -1,5 +1,4 @@
-from utils import pickle_try_load
-from haversine import haversine
+from utils import pickle_try_load, haversine
 import pandas as pd
 import pickle
 import warnings
@@ -265,6 +264,10 @@ class Node:
             best_dst = dst if dst < best_dst else best_dst
 
             return best_dst
+
+    @property
+    def json(self):
+        return self.__dict__
 
     def __str__(self):
         return '[Node] {}, {}, {}, {}, {} km, {} people'.format(self.name,

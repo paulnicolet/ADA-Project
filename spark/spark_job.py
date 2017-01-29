@@ -1,131 +1,87 @@
 from pyspark import SparkContext
-import pickle
-import itertools
+from pyspark.sql import SQLContext
+import json
 import os
 import sys
 sys.path.append('../swiss_flows')
 from node import Node
 from flow import Flow
+from utils import convert_tweet_types
 
 def main():
-    # /Library/Developer/spark-1.6.2-bin-hadoop2.6/bin/spark-submit --master local spark_job.py
+    # Import the tweets and transform the data
+    df = sqlContext.read.json(os.path.join(PATH_BASE, 'filtered_users.json'))
+    map_row = lambda row: (row.userId, list(map(convert_tweet_types, row.tweets)))
+    user_tweets = df.rdd.map(map_row)
 
-    # TODO clean_tweets()   --> save it to HDFS
-    # TODO filter_users()   --> save it to HDFS
-    # TODO generate_nodes() --> save it to HDFS
+    # Parameters declaration
+    node_params = [(10, 1, 15000)]
+    detect_interval_params = [2]
+    directed_params = [False]
 
+    for n_swiss_nodes, n_foreign_nodes, pop_threshold in node_params:
+        # Generate nodes as a broadcast variable
+        # Avoid generating nodes for each subtask
+        nodes = sc.broadcast(Node.generate_nodes(n_swiss_nodes=n_swiss_nodes,
+                                                 n_foreign_nodes=n_foreign_nodes,
+                                                 pop_threshold=pop_threshold))
 
-    # Path to write to HDFS : 'hdfs://iccluster046.iccluster.epfl.ch/user/pnicolet/test.txt'
-
-    with open('../data/filtered_users.pkl', 'rb') as file:
-        user_tweets = pickle.load(file)
-
-    nodes = Node.generate_nodes(n_swiss_nodes=10, n_foreign_nodes=1, pop_threshold=15000)
-
-    # RDD as [(userId, [[t1], [t2]])] with ti = [id, Timestamp, long, lat]
-    #user_tweets = sc.broadcast([(key, value) for key, value in user_tweets.items()])
-
-    user_flows = sc.parallelize([(key, value) for key, value in user_tweets.items()])
-
-    #print(user_flows.take(5))
-
-    lol = user_flows.map(lambda x: detect(x, nodes, 2, False)).filter(lambda x: len(x[1]) > 0)
-
-    print(lol.collect())
+        for detect_interval in detect_interval_params:
+            for directed in directed_params:
+                nodes_params = (n_swiss_nodes, n_foreign_nodes, pop_threshold)
+                run_task(user_tweets, nodes, nodes_params, detect_interval, directed)
 
 
-def detect(entry, nodes, l, directed):
-    print('-------------- DETECT ----------------')
-    user = entry[0]
-    tweet_info = entry[1]
+def run_task(user_tweets, nodes, nodes_params, detect_interval, directed):
+    """ Parallelize the flow detection algorithm for a given set of parameters."""
 
-    # Generate all possible pairs of tweet sorted by interval length
-    pairs = sorted(list(itertools.combinations(tweet_info, 2)), key=by_interval_len)
+    # Detect tweets on each cluster machine
+    flows = user_tweets.flatMap(lambda x: Flow.infer_flows(x[0], x[1], nodes.value, detect_interval, directed))
 
-    # {f1 : {weight:1, intervals:[interval1, interval2...]}}
-    flows = {}
-    for id_pair in pairs:
+    # Aggregate results for each Flow
+    agg_flows = flows.reduceByKey(Flow.reduce_flows_helper)
 
-        # [id, Timestamp, lon, lat]
-        t1 = id_pair[0]
-        t2 = id_pair[1]
+    # Build the final Flow objects from attributes
+    final_flows = agg_flows.map(lambda x: Flow.build_final_flows(x[0], x[1]))
 
-        # Nodes corresponding to the tweets
-        n1 = Node.locate_point((t1[3], t1[2]), nodes)
-        n2 = Node.locate_point((t2[3], t2[2]), nodes)
+    # Generate node weights
+    weighted_nodes = final_flows.flatMap(lambda x: [(x.src, x.weight), (x.dst, x.weight)])
+    weighted_nodes = weighted_nodes.reduceByKey(lambda a, b: a + b)
+    weighted_nodes = weighted_nodes.map(lambda x: {'node': x[0], 'weight': x[1]})
 
-        # Time interval condition
-        time1 = t1[1].to_pydatetime()
-        time2 = t2[1].to_pydatetime()
-        ts1 = time1 if time1 < time2 else time2
-        ts2 = time2 if time1 < time2 else time1
-        tweet_interval = (ts1, ts2)
-        time_cond = (ts2 - ts1).days <= l
+    # Save the results
+    filename = '_{}_{}_{}_{}_{}.json'.format(nodes_params[0],
+                                             nodes_params[1],
+                                             nodes_params[2],
+                                             detect_interval,
+                                             directed)
+    json_mapper = lambda x: json.dumps(x, default=lambda y: y.json)
+    final_flows.map(json_mapper).saveAsTextFile(os.path.join(PATH_BASE, 'results', 'flows' + filename))
+    weighted_nodes.map(json_mapper).saveAsTextFile(os.path.join(PATH_BASE, 'results', 'nodes' + filename))
 
-        # Node conditions
-        geo_cond = n1 and n2 and (n1 != n2)
 
-        if time_cond and geo_cond:
-            # Build the flow
-            src = n1
-            dst = n2
+# Constants set up
+LOCAL = True
+HOSTNAME = 'hdfs://iccluster046.iccluster.epfl.ch'
+if LOCAL:
+    PATH_BASE = os.path.join(os.path.abspath(os.path.dirname(__file__)), os.path.pardir, 'data')
+else:
+    PATH_BASE = os.path.join(HOSTNAME, 'user', 'pnicolet')
 
-            if directed:
-                if time1 < time2 and time1.time() < time2.time():
-                    src = n1
-                    dst = n2
-                elif time2 < time1 and time2.time() < time1.time():
-                    src = n2
-                    dst = n1
-                else:
-                    # Cannot conclude
-                    continue
-
-            flow = Flow(src=src, dst=dst, directed=directed)
-
-            overlap = False
-            if flow in flows:
-                # Look for overlapping flows
-                for interval in flows[flow]['intervals']:
-                    if Flow.is_overlapping(tweet_interval, interval):
-                        overlap = True
-                        break
-
-            else:
-                # Add the initial values if it's a new flow
-                flows[flow] = {'weight': 1, 'intervals': [], 'start':ts1, 'end':ts2}
-
-            # If no overlap, then it's not the exact same flow
-            if not overlap:
-                # Update start date
-                flows[flow]['start'] = min(ts1, flows[flow]['start'])
-
-                # Update end date
-                flows[flow]['end'] = max(ts2, flows[flow]['end'])
-
-                # Update weight
-                flows[flow]['weight'] += 1
-
-            # In any case, add the interval we just found for later use
-            flows[flow]['intervals'].append(tweet_interval)
-
-    return (user, flows)
-
-def by_interval_len(tweet_tuple):
-    tmp1 = tweet_tuple[0]
-    tmp2 = tweet_tuple[1]
-
-    # Order the tweet by timestamp
-    t1 = tmp1 if tmp1[1].to_pydatetime() < tmp2[1].to_pydatetime() else tmp2
-    t2 = tmp2 if tmp1[1].to_pydatetime() < tmp2[1].to_pydatetime() else tmp1
-
-    # Return the length of the interval
-    return t2[1].to_pydatetime() - t1[1].to_pydatetime()
-
+# Spark set up
 if __name__ == '__main__':
     base = [os.path.abspath(os.path.dirname(__file__)), os.path.pardir, 'swiss_flows']
-    files = [os.path.join(*base.append('flow.py')),
-               os.path.join(*base.append('node.py'))]
+    print(base)
+    files = [os.path.join(*(base + ['flow.py'])),
+             os.path.join(*(base + ['node.py'])),
+             os.path.join(*(base + ['utils.py']))]
 
     sc = SparkContext(pyFiles=files)
+    sqlContext = SQLContext(sc)
     main()
+
+# Run job locally
+# /Library/Developer/spark-1.6.2-bin-hadoop2.6/bin/spark-submit --master local spark_job.py
+# Run job on the cluster
+# Uncomment environment variables
+# /Library/Developer/spark-1.6.2-bin-hadoop2.6/bin/spark-submit --master yarn spark_job.py

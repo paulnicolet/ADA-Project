@@ -1,7 +1,10 @@
 import pandas as pd
 import numpy as np
 import pickle
+import json
 import csv
+
+MAX_FIELD_LEN = 25
 
 def clean_tweets(file_path, tosave_path):
 	"""
@@ -35,12 +38,20 @@ def clean_tweets(file_path, tosave_path):
 	imp_col = ['userId', 'createdAt', 'placeLatitude', 'placeLatitude']
 	df = df.dropna(subset=imp_col, how='any')
 
+	# It turns out some rows are ill-formed for some reason
+	df = df[df['id'].apply(_filter_float)]
+	df = df[df['userId'].apply(_filter_float)]
+	df = df[df['placeLongitude'].apply(_filter_float)]
+	df = df[df['placeLatitude'].apply(_filter_float)]
+	df = df[df['createdAt'].apply(_filter_dates)]
+
+
 	# Write in a file
 	df.to_csv(tosave_path + '.csv', index=False)
 
 	return df
 
-def filter_users(clean_tweets_path, save=False, tosave_path=None):
+def filter_users(clean_tweets_path, save=False, tosave_path=None, tosave_format='pickle'):
 	"""
 	Keep only users with more than one tweet and save them
 	as a dictionnary of the form {'user_id': [list of tweets]}
@@ -66,8 +77,27 @@ def filter_users(clean_tweets_path, save=False, tosave_path=None):
 			user_tweets[user] = tweets.drop('userId', axis=1).values.tolist()
 
 	if save:
-		# Save the result
-		with open(tosave_path + '.pkl', 'wb') as file:
-			pickle.dump(user_tweets, file)
+		if tosave_format == 'pickle':
+			with open(tosave_path + '.pkl', 'wb') as file:
+				pickle.dump(user_tweets, file)
+
+		elif tosave_format == 'json':
+			data = list(map(lambda x: {'userId': x[0], 'tweets': x[1]}, user_tweets.items()))
+			with open(tosave_path + '.json', 'w') as file:
+				json.dump(data, file, default=str)
 
 	return user_tweets
+
+def _filter_float(v):
+	try:
+		tmp = float(v)
+		return len(str(tmp)) < MAX_FIELD_LEN
+	except ValueError:
+		return False
+
+def _filter_dates(v):
+	try:
+		tmp = pd.Timestamp(v)
+		return len(str(tmp)) < MAX_FIELD_LEN
+	except ValueError:
+		return False
