@@ -79,7 +79,7 @@
 
     <script>
 
-      var current_filename = "flows_variable1_0_variable2_0.tsv";
+      var current_filename = "flows_variable1_0_variable2_0.json";
 
       $("#slider_1").slider({
         min: 0,
@@ -100,7 +100,7 @@
       $("#reload_button").click(function() {
         
         // create new filename to be loaded using values from sliders
-        current_filename = "flows_" + "variable1_" + $("#slider_1").slider( "option", "value" ) + "_variable2_" + $("#slider_2").slider( "option", "value" ) + ".tsv";
+        current_filename = "flows_" + "variable1_" + $("#slider_1").slider( "option", "value" ) + "_variable2_" + $("#slider_2").slider( "option", "value" ) + ".json";
 
         //remove the svg created by the draw function
         $("svg").remove();
