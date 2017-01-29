@@ -32,18 +32,21 @@
           <div class="col-md-4">
             <div class="variable-name">Directed</div>
           </div>
-          <div class="col-md-8">
-            <input type="checkbox" checked data-toggle="toggle">
+          <div class="col-md-6 slider-col">
+            <div id="slider_directed"></div>
+          </div>
+          <div class="col-md-2">
+            <div id="slider_directed_value">False</div>
           </div>
         </div>
         <div class="row variable-row">
           <div class="col-md-4">
             <div class="variable-name">Swiss nodes</div>
           </div>
-          <div class="col-md-7 slider-col">
+          <div class="col-md-6 slider-col">
             <div id="slider_swiss_nodes"></div>
           </div>
-          <div class="col-md-1">
+          <div class="col-md-2">
           <div id="slider_swiss_nodes_value">0</div>
           </div>
         </div>
@@ -51,10 +54,10 @@
           <div class="col-md-4">
             <div class="variable-name">Foreign nodes (per country)</div>
           </div>
-          <div class="col-md-7 slider-col">
+          <div class="col-md-6 slider-col">
             <div id="slider_foreign_nodes"></div>
           </div>
-          <div class="col-md-1">
+          <div class="col-md-2">
           <div id="slider_foreign_nodes_value">0</div>
           </div>
         </div>
@@ -62,19 +65,27 @@
           <div class="col-md-4">
             <div class="variable-name">Time interval</div>
           </div>
-          <div class="col-md-7 slider-col">
+          <div class="col-md-6 slider-col">
             <div id="slider_time_interval"></div>
           </div>
-          <div class="col-md-1">
+          <div class="col-md-2">
           <div id="slider_time_interval_value">0</div>
           </div>
         </div>
         <div class="row variable-row">
           <div class="col-md-4">
-            <div class="variable-name">Date</div>
+            <div class="variable-name">From</div>
           </div>
           <div class="col-md-8">
-            <input type="text" id="datepicker">
+            <input type="text" id="from_datepicker">
+          </div>
+        </div>
+        <div class="row variable-row">
+          <div class="col-md-4">
+            <div class="variable-name">To</div>
+          </div>
+          <div class="col-md-8">
+            <input type="text" id="dto_atepicker">
           </div>
         </div>
         <div class="row" id="reload-row">
@@ -108,28 +119,40 @@
 
       var current_filename = "flows_variable1_0_variable2_0.json";
 
-      $("#slider_swiss_nodes").slider({
+      $("#slider_directed").slider({
         min: 0,
         max: 1,
         change: function( event, ui ) {
-          var value = $("#slider_1").slider( "option", "value" );
-          $("#slider_1_value").html(value);
+          var value = $("#slider_directed").slider( "option", "value" );
+          if(value == 0) {
+            $("#slider_directed_value").html("False");
+          } else {
+            $("#slider_directed_value").html("True");
+          }
+        }
+      });
+      $("#slider_swiss_nodes").slider({
+        min: 2,
+        max: 7,
+        change: function( event, ui ) {
+          var value = $("#slider_swiss_nodes").slider( "option", "value" );
+          $("#slider_swiss_nodes_value").html(value*2);
         }
       });
       $("#slider_foreign_nodes").slider({
         min: 0,
-        max: 1,
+        max: 3,
         change: function( event, ui ) {
-          var value = $("#slider_2").slider( "option", "value" );
-          $("#slider_2_value").html(value);
+          var value = $("#slider_foreign_nodes").slider( "option", "value" );
+          $("#slider_foreign_nodes_value").html(value);
         }
       });
       $("#slider_time_interval").slider({
-        min: 0,
-        max: 1,
+        min: 1,
+        max: 5,
         change: function( event, ui ) {
-          var value = $("#slider_2").slider( "option", "value" );
-          $("#slider_2_value").html(value);
+          var value = $("#slider_time_interval").slider( "option", "value" );
+          $("#slider_time_interval_value").html(value*2);
         }
       });
       $(function() {
