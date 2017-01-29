@@ -29,6 +29,8 @@ function draw(geo_data, current_filename) {
                .style('stroke-width', 0.5);
 
   function plot_points(data) {
+
+      console.log(data);
       
       // Find the maximum weight among all nodes 
       var weight_max = d3.max(data, function(node) {
@@ -135,13 +137,21 @@ function draw(geo_data, current_filename) {
   }
 
   // Load the nodes and plot them 
-  d3.tsv("dummy_nodes.tsv", function(d) {
-    return d;
-  }, plot_points);
+  d3.json("mNode.json", function(error, data){
+    if(error){
+      console.log(error);
+    }
+
+    plot_points(data);
+  });
 
   // Load the flows and plot them 
-  d3.tsv(current_filename, function(d) {
-    return d;
-  }, plot_flows);
+  d3.json(current_filename, function(error, data){
+    if(error){
+      console.log(error);
+    }
+    
+    plot_flows(data);
+  });
 
 };

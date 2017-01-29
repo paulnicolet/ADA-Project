@@ -30,24 +30,51 @@
       <div class="col-md-4" id="sidebar">
         <div class="row variable-row" style="padding-top: 40px;">
           <div class="col-md-4">
-            <div class="variable-name">Variable 1</div>
+            <div class="variable-name">Directed</div>
           </div>
-          <div class="col-md-7 slider-col">
-            <div id="slider_1"></div>
-          </div>
-          <div class="col-md-1">
-          <div id="slider_1_value">0</div>
+          <div class="col-md-8">
+            <input type="checkbox" checked data-toggle="toggle">
           </div>
         </div>
         <div class="row variable-row">
           <div class="col-md-4">
-            <div class="variable-name">Variable 2</div>
+            <div class="variable-name">Swiss nodes</div>
           </div>
           <div class="col-md-7 slider-col">
-            <div id="slider_2"></div>
+            <div id="slider_swiss_nodes"></div>
           </div>
           <div class="col-md-1">
-          <div id="slider_2_value">0</div>
+          <div id="slider_swiss_nodes_value">0</div>
+          </div>
+        </div>
+        <div class="row variable-row">
+          <div class="col-md-4">
+            <div class="variable-name">Foreign nodes (per country)</div>
+          </div>
+          <div class="col-md-7 slider-col">
+            <div id="slider_foreign_nodes"></div>
+          </div>
+          <div class="col-md-1">
+          <div id="slider_foreign_nodes_value">0</div>
+          </div>
+        </div>
+        <div class="row variable-row">
+          <div class="col-md-4">
+            <div class="variable-name">Time interval</div>
+          </div>
+          <div class="col-md-7 slider-col">
+            <div id="slider_time_interval"></div>
+          </div>
+          <div class="col-md-1">
+          <div id="slider_time_interval_value">0</div>
+          </div>
+        </div>
+        <div class="row variable-row">
+          <div class="col-md-4">
+            <div class="variable-name">Date</div>
+          </div>
+          <div class="col-md-8">
+            <input type="text" id="datepicker">
           </div>
         </div>
         <div class="row" id="reload-row">
@@ -79,9 +106,9 @@
 
     <script>
 
-      var current_filename = "flows_variable1_0_variable2_0.tsv";
+      var current_filename = "flows_variable1_0_variable2_0.json";
 
-      $("#slider_1").slider({
+      $("#slider_swiss_nodes").slider({
         min: 0,
         max: 1,
         change: function( event, ui ) {
@@ -89,7 +116,7 @@
           $("#slider_1_value").html(value);
         }
       });
-      $("#slider_2").slider({
+      $("#slider_foreign_nodes").slider({
         min: 0,
         max: 1,
         change: function( event, ui ) {
@@ -97,10 +124,21 @@
           $("#slider_2_value").html(value);
         }
       });
+      $("#slider_time_interval").slider({
+        min: 0,
+        max: 1,
+        change: function( event, ui ) {
+          var value = $("#slider_2").slider( "option", "value" );
+          $("#slider_2_value").html(value);
+        }
+      });
+      $(function() {
+        $( "#datepicker" ).datepicker();
+      });
       $("#reload_button").click(function() {
         
         // create new filename to be loaded using values from sliders
-        current_filename = "flows_" + "variable1_" + $("#slider_1").slider( "option", "value" ) + "_variable2_" + $("#slider_2").slider( "option", "value" ) + ".tsv";
+        current_filename = "flows_" + "variable1_" + $("#slider_1").slider( "option", "value" ) + "_variable2_" + $("#slider_2").slider( "option", "value" ) + ".json";
 
         //remove the svg created by the draw function
         $("svg").remove();
