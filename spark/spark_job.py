@@ -7,6 +7,7 @@ sys.path.append('../swiss_flows')
 from node import Node
 from flow import Flow
 from utils import convert_tweet_types
+import itertools
 
 def main():
     # Import the tweets and transform the data
@@ -15,9 +16,15 @@ def main():
     user_tweets = df.rdd.map(map_row)
 
     # Parameters declaration
-    node_params = [(10, 1, 15000)]
-    detect_interval_params = [2]
-    directed_params = [False]
+    swiss_nodes_params = [4, 6, 8, 10, 12, 14]
+    foreign_nodes_params = [0, 1, 2, 3]
+    foreign_pop_params = [15000]
+    detect_interval_params = [2, 4, 6, 8, 10]
+    directed_params = [False, True]
+
+    node_params = list(itertools.product(swiss_nodes_params,
+                                         foreign_nodes_params,
+                                         foreign_pop_params))
 
     for n_swiss_nodes, n_foreign_nodes, pop_threshold in node_params:
         # Generate nodes as a broadcast variable

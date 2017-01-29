@@ -102,42 +102,43 @@ class Node:
         swiss_nodes = Node.generate_swiss_nodes(n_nodes=n_swiss_nodes,
                                                 save=save)
 
-        # Define the neighboring countries
-        countries = ['FR', 'IT', 'DE', 'AT']
-
         nodes = swiss_nodes
-        for country in countries:
-            df = Node.import_country(country)
+        if n_foreign_nodes > 0:
+            # Define the neighboring countries
+            countries = ['FR', 'IT', 'DE', 'AT']
 
-            # Keep cities with pop > pop_threshold
-            df = df[df['population'] > pop_threshold]
+            for country in countries:
+                df = Node.import_country(country)
 
-            # Create the new distance feature
-            find_node = lambda x: Node.__find_closest_node(x['latitude'],
-                                                           x['longitude'],
-                                                           swiss_nodes)
-            df['distance'] = df.apply(find_node, axis=1)
+                # Keep cities with pop > pop_threshold
+                df = df[df['population'] > pop_threshold]
 
-            # Sort rows by distance
-            df = df.sort_values(by='distance', ascending=True)
+                # Create the new distance feature
+                find_node = lambda x: Node.__find_closest_node(x['latitude'],
+                                                               x['longitude'],
+                                                               swiss_nodes)
+                df['distance'] = df.apply(find_node, axis=1)
 
-            # Take the desired number
-            if df.shape[0] < n_foreign_nodes:
-                template = '{} nodes requested, {} nodes max, returns {} nodes'
-                msg = template.format(n_foreign_nodes, df.shape[0], df.shape[0])
-                warnings.warn(msg, UserWarning)
+                # Sort rows by distance
+                df = df.sort_values(by='distance', ascending=True)
 
-            df = df[:n_foreign_nodes]
+                # Take the desired number
+                if df.shape[0] < n_foreign_nodes:
+                    template = '{} nodes requested, {} nodes max, returns {} nodes'
+                    msg = template.format(n_foreign_nodes, df.shape[0], df.shape[0])
+                    warnings.warn(msg, UserWarning)
 
-            # Generate the nodes
-            for row in df.iterrows():
-                args = {'name': row[1].asciiname,
-                        'position': (row[1].latitude, row[1].longitude),
-                        'population': row[1].population,
-                        'canton': row[1]['admin1 code'],
-                        'country': country}
+                df = df[:n_foreign_nodes]
 
-                nodes.append(Node(**args))
+                # Generate the nodes
+                for row in df.iterrows():
+                    args = {'name': row[1].asciiname,
+                            'position': (row[1].latitude, row[1].longitude),
+                            'population': row[1].population,
+                            'canton': row[1]['admin1 code'],
+                            'country': country}
+
+                    nodes.append(Node(**args))
 
         # Save and return the result
         if save:
