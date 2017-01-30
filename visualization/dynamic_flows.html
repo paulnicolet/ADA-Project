@@ -12,9 +12,9 @@
     <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
 
     <!-- JQUERY SLIDER -->
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
-    <script src="//code.jquery.com/jquery-1.12.4.js"></script>
-    <script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
     <!-- MAP -->
     <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -85,7 +85,7 @@
             <div class="variable-name">To</div>
           </div>
           <div class="col-md-8">
-            <input type="text" id="dto_atepicker">
+            <input type="text" id="to_datepicker">
           </div>
         </div>
         <div class="row" id="reload-row">
@@ -108,7 +108,7 @@
 
           // Load the map and draw the visualization
           d3.json("world_countries.json", function(json) {
-            draw(json, current_filename);
+            draw(json, current_filename, current_nodes);
           });
         </script>
       </div>
@@ -117,7 +117,8 @@
 
     <script>
 
-      var current_filename = "flows_variable1_0_variable2_0.json";
+      var current_filename = "/visualization/d3-files/flows_4_0_15000_2_False.json";
+      var current_nodes = "/visualization/d3-files/nodes_4_0_15000_2_False.json";
 
       $("#slider_directed").slider({
         min: 0,
@@ -156,21 +157,33 @@
         }
       });
       $(function() {
-        $( "#datepicker" ).datepicker();
+        $( "#from_datepicker" ).datepicker();
+      });
+      $(function() {
+        $( "#to_datepicker" ).datepicker();
       });
       $("#reload_button").click(function() {
         
-        // create new filename to be loaded using values from sliders
-        current_filename = "flows_" + "variable1_" + $("#slider_1").slider( "option", "value" ) + "_variable2_" + $("#slider_2").slider( "option", "value" ) + ".json";
+        current_filename = "/visualization/d3-files/flows_"
+                          + $("#slider_swiss_nodes_value").html() + "_" // swiss nodes
+                          + $('#slider_foreign_nodes_value').html() + "_" // foreign nodes per country
+                          + "15000" + "_" // foreign population
+                          + $('#slider_time_interval_value').html() + "_" // detection interval
+                          + $('#slider_directed_value').html() + ".json"; //directed
+
+        current_nodes = "/visualization/d3-files/nodes_"
+                          + $("#slider_swiss_nodes_value").html() + "_" // swiss nodes
+                          + $('#slider_foreign_nodes_value').html() + "_" // foreign nodes per country
+                          + "15000" + "_" // foreign population
+                          + $('#slider_time_interval_value').html() + "_" // detection interval
+                          + $('#slider_directed_value').html() + ".json"; //directed
 
         //remove the svg created by the draw function
         $("svg").remove();
         // Load the map and draw the visualization
         d3.json("world_countries.json", function(json) {
-          draw(json, current_filename);
+          draw(json, current_filename, current_nodes);
         });
-
-        console.log(current_filename);
         
       });
     </script>

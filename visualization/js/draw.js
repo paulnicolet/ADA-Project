@@ -1,4 +1,4 @@
-function draw(geo_data, current_filename) {
+function draw(geo_data, current_filename, current_nodes) {
 
   "use strict";
   var margin = 0,
@@ -29,8 +29,6 @@ function draw(geo_data, current_filename) {
                .style('stroke-width', 0.5);
 
   function plot_points(data) {
-
-      console.log(data);
       
       // Find the maximum weight among all nodes 
       var weight_max = d3.max(data, function(node) {
@@ -40,7 +38,7 @@ function draw(geo_data, current_filename) {
       // Scale the radius so that circles are visible if if they have extreme weights 
       var radius = d3.scale.sqrt()
                      .domain([0, weight_max])
-                     .range([0, 15]);
+                     .range([0, 60]);
 
       // Draw circles
       svg.append('svg')
@@ -50,10 +48,16 @@ function draw(geo_data, current_filename) {
          .enter()
          .append("circle")
          .attr('cx', function(node) { 
-            return projection([node['longitude'], node['latitude']])[0]; 
+            var node_longitude = node['node']['position'][1];
+            var node_latitude = node['node']['position'][0];
+
+            return projection([node_longitude, node_latitude])[0]; 
           })
          .attr('cy', function(node) { 
-            return projection([node['longitude'], node['latitude']])[1]; 
+            var node_longitude = node['node']['position'][1];
+            var node_latitude = node['node']['position'][0];
+
+            return projection([node_longitude, node_latitude])[1]; 
           })
          .attr('r', function(node) {
               return radius(node['weight']);
@@ -69,14 +73,22 @@ function draw(geo_data, current_filename) {
          .enter()
          .append("text")
          .attr("x", function(node) { 
+
+          var node_longitude = node['node']['position'][1];
+          var node_latitude = node['node']['position'][0];
+
            // The node's name is placed on its right side 
-           return projection([node['longitude'], node['latitude']])[0] + radius(node['weight']) + 1; 
+           return projection([node_longitude, node_latitude])[0] + radius(node['weight']) + 1; 
          })
          .attr("y", function(node) {  
-           return projection([node['longitude'], node['latitude']])[1];
+
+          var node_longitude = node['node']['position'][1];
+          var node_latitude = node['node']['position'][0];
+
+           return projection([node_longitude, node_latitude])[1];
          })
          .text( function (node) { 
-          return node['name']; 
+          return node['node']['name']; 
          })
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
@@ -106,29 +118,53 @@ function draw(geo_data, current_filename) {
        .enter()
        .append("line")
        .attr("x1", function(flow) { 
-         var orientation = flow['src_longitude'] - flow['dest_longitude'];
+
+         // Coordinates
+         var src_longitude = flow['src']['position'][1];
+         var src_latitude = flow['src']['position'][0];
+         var dst_longitude = flow['dst']['position'][1];
+         var dest_latitude = flow['dst']['position'][0];
+
+         var orientation = src_longitude - dst_longitude;
          if(orientation < 0) {
-          return projection([flow['src_longitude'], flow['src_latitude']])[0] - 5; 
+          return projection([src_longitude, src_latitude])[0] - 5; 
          } else {
-          return projection([flow['src_longitude'], flow['src_latitude']])[0] + 5;
+          return projection([src_longitude, src_latitude])[0] + 5;
          }
        })
-       .attr("y1", function(flow) {  
-         return projection([flow['src_longitude'], flow['src_latitude']])[1];
+       .attr("y1", function(flow) { 
+         
+         // Coordinates
+         var src_longitude = flow['src']['position'][1];
+         var src_latitude = flow['src']['position'][0];
+
+         return projection([src_longitude, src_latitude])[1];
        })
        .attr("x2", function(flow) {  
-         var orientation = flow['src_longitude'] - flow['dest_longitude'];
+
+         // Coordinates
+         var src_longitude = flow['src']['position'][1];
+         var src_latitude = flow['src']['position'][0];
+         var dst_longitude = flow['dst']['position'][1];
+         var dest_latitude = flow['dst']['position'][0];
+
+         var orientation = src_longitude - dst_longitude;
          if(orientation < 0) {
-          return projection([flow['dest_longitude'], flow['dest_latitude']])[0] - 5; 
+          return projection([dst_longitude, dest_latitude])[0] - 5; 
          } else {
-          return projection([flow['dest_longitude'], flow['dest_latitude']])[0] + 5;
+          return projection([dst_longitude, dest_latitude])[0] + 5;
          }
        })
        .attr("y2", function(flow) {  
-         return projection([flow['dest_longitude'], flow['dest_latitude']])[1];
+
+         // Coordinates
+         var dst_longitude = flow['dst']['position'][1];
+         var dest_latitude = flow['dst']['position'][0];
+
+         return projection([dst_longitude, dest_latitude])[1];
        })
        .attr("stroke-width", function(flow) {
-         return flow['weight'] / 5;
+         return flow['weight'] / 8;
        })
        .attr("stroke", "blue")
        .style("stroke-opacity", 0.5)
@@ -137,7 +173,7 @@ function draw(geo_data, current_filename) {
   }
 
   // Load the nodes and plot them 
-  d3.json("mNode.json", function(error, data){
+  d3.json(current_nodes, function(error, data){
     if(error){
       console.log(error);
     }
