@@ -87,7 +87,11 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
           var node_longitude = node['node']['position'][1];
           var node_latitude = node['node']['position'][0];
 
-           return projection([node_longitude, node_latitude])[1];
+          if( (node['node']['name'] == "Basel") || (node['node']['name'] == "Verbania") || (node['node']['name'] == "Mulhouse") || (node['node']['name'] == "Koniz")) {
+           return projection([node_longitude, node_latitude])[1] + 10;
+          } else {
+            return projection([node_longitude, node_latitude])[1];
+          }
          })
          .text( function (node) { 
           return node['node']['name']; 
