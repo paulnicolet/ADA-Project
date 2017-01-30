@@ -1,7 +1,5 @@
 function draw(geo_data, current_filename, current_nodes, current_from_date, current_to_date, is_directed) {
 
-  console.log(is_directed);
-
   "use strict";
   var margin = 0,
       width = 960 - margin,
@@ -26,7 +24,7 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
                .enter()
                .append('path')
                .attr('d', path)
-               .style('fill', 'white')
+               .style('fill', '#ECEFF1')
                .style('stroke', 'black')
                .style('stroke-width', 0.5);
 

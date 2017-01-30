@@ -2,6 +2,11 @@ body {
 	font-family: 'Roboto', sans-serif;
 }
 
+h1 {
+	margin-left: 20px;
+	color: white;
+}
+
 .variable-row {
 	padding-top: 20px;
 	padding-bottom: 20px;
@@ -22,8 +27,10 @@ body {
 }
 
 #sidebar {
-	background-color: #B0BEC5;
 	color: black;
+	-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.48);
+	-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.48);
+	box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.48);
 }
 
 #filling-row {
