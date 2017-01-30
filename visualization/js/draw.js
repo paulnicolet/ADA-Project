@@ -3,7 +3,7 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
   "use strict";
   var margin = 0,
       width = 960 - margin,
-      height = 850 - margin;
+      height = 780 - margin;
 
   var svg = d3.select("body")
       .append("svg")
