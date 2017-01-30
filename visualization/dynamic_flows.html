@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="css/style.css">
 
 </head>
-  <body>     
+  <body>
 
     <div>
       <div class="col-md-4" id="sidebar">
@@ -92,9 +92,9 @@
           <input class="ui-button ui-widget ui-corner-all" type="submit" value="Reload" id="reload_button">
         </div>
         <div class="row" id="filling-row">
-          
+
         </div>
-        
+
       </div>
 
       <div class="col-md-8" id="swiss_flows">
@@ -112,7 +112,7 @@
           });
         </script>
       </div>
-    
+
     </div>
 
     <script>
@@ -130,6 +130,7 @@
           } else {
             $("#slider_directed_value").html("True");
           }
+          reload()
         }
       });
       $("#slider_swiss_nodes").slider({
@@ -138,6 +139,7 @@
         change: function( event, ui ) {
           var value = $("#slider_swiss_nodes").slider( "option", "value" );
           $("#slider_swiss_nodes_value").html(value*2);
+          reload()
         }
       });
       $("#slider_foreign_nodes").slider({
@@ -146,6 +148,7 @@
         change: function( event, ui ) {
           var value = $("#slider_foreign_nodes").slider( "option", "value" );
           $("#slider_foreign_nodes_value").html(value);
+          reload()
         }
       });
       $("#slider_time_interval").slider({
@@ -154,6 +157,7 @@
         change: function( event, ui ) {
           var value = $("#slider_time_interval").slider( "option", "value" );
           $("#slider_time_interval_value").html(value*2);
+          reload()
         }
       });
       $(function() {
@@ -162,8 +166,10 @@
       $(function() {
         $( "#to_datepicker" ).datepicker();
       });
-      $("#reload_button").click(function() {
-        
+      $("#reload_button").click(reload);
+
+      function reload() {
+
         current_filename = "/visualization/d3-files/flows_"
                           + $("#slider_swiss_nodes_value").html() + "_" // swiss nodes
                           + $('#slider_foreign_nodes_value').html() + "_" // foreign nodes per country
@@ -184,8 +190,8 @@
         d3.json("world_countries.json", function(json) {
           draw(json, current_filename, current_nodes);
         });
-        
-      });
+
+      }
     </script>
 
   </body>
