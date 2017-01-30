@@ -119,6 +119,9 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
 
   function plot_flows(data) {
 
+    console.log(current_from_date);
+    console.log(current_to_date);
+
     // Define the reusable arrow tip
     svg.append("svg:defs") 
         .append("svg:marker") 

@@ -197,8 +197,15 @@
                           + $('#slider_time_interval_value').html() + "_" // detection interval
                           + $('#slider_directed_value').html() + ".json"; //directed
 
-        current_from_date = $( "#from_datepicker" ).datepicker( "getDate" );
-        current_to_date = $( "#to_datepicker" ).datepicker( "getDate" );
+        from_date_cal = $( "#from_datepicker" ).datepicker( "getDate" );
+        if ( from_date_cal != null) {
+          current_from_date = from_date_cal; 
+        }
+
+        to_date_cal = $( "#to_datepicker" ).datepicker( "getDate" );
+        if ( to_date_cal != null) {
+          current_from_date = to_date_cal; 
+        }
 
         is_directed;
         if ( $('#slider_directed_value').html() == 'False' ) {
