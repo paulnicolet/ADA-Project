@@ -4,6 +4,7 @@ import pickle
 import json
 import csv
 
+# Define the maximum length of a data field.
 MAX_FIELD_LEN = 25
 
 def clean_tweets(file_path, tosave_path):
@@ -89,6 +90,7 @@ def filter_users(clean_tweets_path, save=False, tosave_path=None, tosave_format=
 	return user_tweets
 
 def _filter_float(v):
+	""" Make sure the value is a float with length < MAX_FIELD_LEN. """
 	try:
 		tmp = float(v)
 		return len(str(tmp)) < MAX_FIELD_LEN
@@ -96,6 +98,7 @@ def _filter_float(v):
 		return False
 
 def _filter_dates(v):
+	""" Make sure the value is a Timestamp with length < MAX_FIELD_LEN. """
 	try:
 		tmp = pd.Timestamp(v)
 		return len(str(tmp)) < MAX_FIELD_LEN
