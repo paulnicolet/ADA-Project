@@ -64,7 +64,24 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
          .attr('r', function(node) {
               return radius(node['weight']);
          })
-         .attr('fill', 'rgb(247, 148, 32)')
+         .attr('fill', function(node){
+          var population = node['node']['population'];
+
+          if(population <= 50000) {
+            return "#FFE0B2";
+          } else if( (population > 50000) && (population <= 100000) ) {
+            return "#FFCC80";
+          } else if( (population > 100000) && (population <= 150000) ) {
+            return "#FFA726";
+          } else if( (population > 150000) && (population <= 200000) ) {
+            return "#FB8C00";
+          } else if( (population > 200000) && (population <= 250000) ) {
+            return "#EF6C00";
+          } else {
+            return "#E65100";
+          }
+
+         })
          .attr('stroke', 'black')
          .attr('stroke-width', 0.7)
          .attr('opacity', 0.7);
