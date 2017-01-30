@@ -1,7 +1,6 @@
-function draw(geo_data, current_filename, current_nodes, current_from_date, current_to_date) {
+function draw(geo_data, current_filename, current_nodes, current_from_date, current_to_date, is_directed) {
 
-  console.log(current_from_date);
-  console.log(current_to_date);
+  console.log(is_directed);
 
   "use strict";
   var margin = 0,
@@ -184,7 +183,7 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
           var flow_start_date = new Date(flow['start_date']);
           var flow_end_date = new Date(flow['end_date']);
 
-          if( (flow_start_date >= current_from_date) && (flow_end_date <= current_to_date) ) {
+          if( (flow_start_date >= current_from_date) && (flow_end_date <= current_to_date) && (is_directed)) {
             return "url(#triangle)";
           } else {
             return null;
