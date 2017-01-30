@@ -170,8 +170,26 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
          return flow['weight'] / 8;
        })
        .attr("stroke", "blue")
-       .style("stroke-opacity", 0.5)
-       .attr("marker-end", "url(#triangle)");
+       .style("stroke-opacity", function(flow) {
+        var flow_start_date = new Date(flow['start_date']);
+        var flow_end_date = new Date(flow['end_date']);
+
+        if( (flow_start_date >= current_from_date) && (flow_end_date <= current_to_date) ) {
+          return 0.6;
+        } else {
+          return 0;
+        }
+       })
+       .attr("marker-end", function(flow) {
+          var flow_start_date = new Date(flow['start_date']);
+          var flow_end_date = new Date(flow['end_date']);
+
+          if( (flow_start_date >= current_from_date) && (flow_end_date <= current_to_date) ) {
+            return "url(#triangle)";
+          } else {
+            return null;
+          }
+        });
 
   }
 
