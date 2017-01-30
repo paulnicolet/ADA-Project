@@ -1,4 +1,7 @@
-function draw(geo_data, current_filename, current_nodes) {
+function draw(geo_data, current_filename, current_nodes, current_from_date, current_to_date) {
+
+  console.log(current_from_date);
+  console.log(current_to_date);
 
   "use strict";
   var margin = 0,

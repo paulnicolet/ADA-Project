@@ -47,7 +47,7 @@
             <div id="slider_swiss_nodes"></div>
           </div>
           <div class="col-md-2">
-          <div id="slider_swiss_nodes_value">0</div>
+          <div id="slider_swiss_nodes_value">4</div>
           </div>
         </div>
         <div class="row variable-row">
@@ -69,7 +69,7 @@
             <div id="slider_time_interval"></div>
           </div>
           <div class="col-md-2">
-          <div id="slider_time_interval_value">0</div>
+          <div id="slider_time_interval_value">2</div>
           </div>
         </div>
         <div class="row variable-row">
@@ -108,7 +108,7 @@
 
           // Load the map and draw the visualization
           d3.json("world_countries.json", function(json) {
-            draw(json, current_filename, current_nodes);
+            draw(json, current_filename, current_nodes, current_from_date, current_to_date);
           });
         </script>
       </div>
@@ -119,6 +119,9 @@
 
       var current_filename = "/visualization/d3-files/flows_4_0_15000_2_False.json";
       var current_nodes = "/visualization/d3-files/nodes_4_0_15000_2_False.json";
+
+      var current_from_date = null;
+      var current_to_date = null;
 
       $("#slider_directed").slider({
         min: 0,
@@ -184,11 +187,14 @@
                           + $('#slider_time_interval_value').html() + "_" // detection interval
                           + $('#slider_directed_value').html() + ".json"; //directed
 
+        var current_from_date = $( "#from_datepicker" ).datepicker( "getDate" );
+        var current_to_date = $( "#to_datepicker" ).datepicker( "getDate" );
+
         //remove the svg created by the draw function
         $("svg").remove();
         // Load the map and draw the visualization
         d3.json("world_countries.json", function(json) {
-          draw(json, current_filename, current_nodes);
+          draw(json, current_filename, current_nodes, current_from_date, current_to_date);
         });
 
       }
