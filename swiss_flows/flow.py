@@ -231,14 +231,13 @@ class Flow:
 
     @property
     def symmetrical(self):
-        """
-        Returns the symetrical flow
-        """
+        """ Returns the symetrical flow. """
         return Flow(src=self.dst, dst=self.src, directed=self.directed)
 
 
     @staticmethod
     def _by_interval_len(tweet_tuple):
+        """ Helper function to sort tweets by interval length. """
         tmp1 = tweet_tuple[0]
         tmp2 = tweet_tuple[1]
 
