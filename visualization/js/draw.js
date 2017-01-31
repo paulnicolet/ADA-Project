@@ -13,7 +13,7 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
       .attr('class', 'map');
 
   var projection = d3.geo.mercator()
-                         .scale(9000)
+                         .scale(11000)
                          .center([8.03667, 46.70111]) // because of scroll, not perfectly centered on CH
                          .translate( [width / 2, height / 2]);
 
@@ -24,18 +24,18 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
                .enter()
                .append('path')
                .attr('d', path)
-               .style('fill', '#ECEFF1')
+               .style('fill', '#FFFFFF')
                .style('stroke', 'black')
                .style('stroke-width', 0.5);
 
   function plot_points(data) {
-      
-      // Find the maximum weight among all nodes 
+
+      // Find the maximum weight among all nodes
       var weight_max = d3.max(data, function(node) {
           return node['weight'];
       });
 
-      // Scale the radius so that circles are visible if if they have extreme weights 
+      // Scale the radius so that circles are visible if if they have extreme weights
       var radius = d3.scale.sqrt()
                      .domain([0, weight_max])
                      .range([0, 60]);
@@ -47,17 +47,17 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
          .data(data)
          .enter()
          .append("circle")
-         .attr('cx', function(node) { 
+         .attr('cx', function(node) {
             var node_longitude = node['node']['position'][1];
             var node_latitude = node['node']['position'][0];
 
-            return projection([node_longitude, node_latitude])[0]; 
+            return projection([node_longitude, node_latitude])[0];
           })
-         .attr('cy', function(node) { 
+         .attr('cy', function(node) {
             var node_longitude = node['node']['position'][1];
             var node_latitude = node['node']['position'][0];
 
-            return projection([node_longitude, node_latitude])[1]; 
+            return projection([node_longitude, node_latitude])[1];
           })
          .attr('r', function(node) {
               return radius(node['weight']);
@@ -89,15 +89,15 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
          .data(data)
          .enter()
          .append("text")
-         .attr("x", function(node) { 
+         .attr("x", function(node) {
 
           var node_longitude = node['node']['position'][1];
           var node_latitude = node['node']['position'][0];
 
-           // The node's name is placed on its right side 
-           return projection([node_longitude, node_latitude])[0] + radius(node['weight']) + 1; 
+           // The node's name is placed on its right side
+           return projection([node_longitude, node_latitude])[0] + radius(node['weight']) + 1;
          })
-         .attr("y", function(node) {  
+         .attr("y", function(node) {
 
           var node_longitude = node['node']['position'][1];
           var node_latitude = node['node']['position'][0];
@@ -108,13 +108,13 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
             return projection([node_longitude, node_latitude])[1];
           }
          })
-         .text( function (node) { 
-          return node['node']['name']; 
+         .text( function (node) {
+          return node['node']['name'];
          })
          .attr("font-family", "sans-serif")
          .attr("font-size", "15px")
          .attr("fill", "black");
-         
+
   }
 
   function plot_flows(data) {
@@ -123,25 +123,25 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
     console.log(current_to_date);
 
     // Define the reusable arrow tip
-    svg.append("svg:defs") 
-        .append("svg:marker") 
-        .attr("id", "triangle") 
-        .attr("refX", 6) 
+    svg.append("svg:defs")
+        .append("svg:marker")
+        .attr("id", "triangle")
+        .attr("refX", 6)
         .attr("refY", 6)
         .attr("markerWidth", 30)
         .attr("markerHeight", 30)
-        .attr("orient", "auto") 
+        .attr("orient", "auto")
         .append("path")
-        .attr("d", "M 0 0 12 6 0 12 3 6") 
+        .attr("d", "M 0 0 12 6 0 12 3 6")
         .attr("opacity", 0.5)
-        .style("fill", "blue"); 
+        .style("fill", "blue");
 
     // Plot the lines programatically
     svg.selectAll("line")
        .data(data)
        .enter()
        .append("line")
-       .attr("x1", function(flow) { 
+       .attr("x1", function(flow) {
 
          // Coordinates
          var src_longitude = flow['src']['position'][1];
@@ -151,20 +151,20 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
 
          var orientation = src_longitude - dst_longitude;
          if(orientation < 0) {
-          return projection([src_longitude, src_latitude])[0] - 5; 
+          return projection([src_longitude, src_latitude])[0] - 5;
          } else {
           return projection([src_longitude, src_latitude])[0] + 5;
          }
        })
-       .attr("y1", function(flow) { 
-         
+       .attr("y1", function(flow) {
+
          // Coordinates
          var src_longitude = flow['src']['position'][1];
          var src_latitude = flow['src']['position'][0];
 
          return projection([src_longitude, src_latitude])[1];
        })
-       .attr("x2", function(flow) {  
+       .attr("x2", function(flow) {
 
          // Coordinates
          var src_longitude = flow['src']['position'][1];
@@ -174,12 +174,12 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
 
          var orientation = src_longitude - dst_longitude;
          if(orientation < 0) {
-          return projection([dst_longitude, dest_latitude])[0] - 5; 
+          return projection([dst_longitude, dest_latitude])[0] - 5;
          } else {
           return projection([dst_longitude, dest_latitude])[0] + 5;
          }
        })
-       .attr("y2", function(flow) {  
+       .attr("y2", function(flow) {
 
          // Coordinates
          var dst_longitude = flow['dst']['position'][1];
@@ -214,7 +214,7 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
 
   }
 
-  // Load the nodes and plot them 
+  // Load the nodes and plot them
   d3.json(current_nodes, function(error, data){
     if(error){
       console.log(error);
@@ -223,12 +223,12 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
     plot_points(data);
   });
 
-  // Load the flows and plot them 
+  // Load the flows and plot them
   d3.json(current_filename, function(error, data){
     if(error){
       console.log(error);
     }
-    
+
     plot_flows(data);
   });
 

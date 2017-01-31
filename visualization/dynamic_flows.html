@@ -29,11 +29,11 @@
     <div>
       <div class="col-md-4" id="sidebar">
         <div class="row variable-row" style="background-color: #607D8B;">
-          <h1>Swiss Flows</h1>
+          <h1>Geograhpical Flows in Switzerland</h1>
         </div>
         <div class="row variable-row" style="padding-top: 40px;">
           <div class="col-md-4">
-            <div class="variable-name">Directed</div>
+            <div class="variable-name">Directed flows</div>
           </div>
           <div class="col-md-6 slider-col">
             <div id="slider_directed"></div>
@@ -44,7 +44,7 @@
         </div>
         <div class="row variable-row">
           <div class="col-md-4">
-            <div class="variable-name">Swiss nodes</div>
+            <div class="variable-name">Number of Swiss nodes</div>
           </div>
           <div class="col-md-6 slider-col">
             <div id="slider_swiss_nodes"></div>
@@ -55,7 +55,7 @@
         </div>
         <div class="row variable-row">
           <div class="col-md-4">
-            <div class="variable-name">Foreign nodes (per country)</div>
+            <div class="variable-name">Number of foreign nodes <br> (per country)</div>
           </div>
           <div class="col-md-6 slider-col">
             <div id="slider_foreign_nodes"></div>
@@ -66,7 +66,7 @@
         </div>
         <div class="row variable-row">
           <div class="col-md-4">
-            <div class="variable-name">Time interval</div>
+            <div class="variable-name">Time interval <br> (in days)</div>
           </div>
           <div class="col-md-6 slider-col">
             <div id="slider_time_interval"></div>
@@ -95,12 +95,23 @@
           <input class="ui-button ui-widget ui-corner-all" type="submit" value="Reload" id="reload_button">
         </div>
         <div class="row" id="legend" style="margin: 50px;">
-          <div class="col-md-2" style="background-color: #FFE0B2;">0-50k</div>
+          <div class="variable-name">
+            Legend
+          </div>
+
+          <div>
+            Population
+          </div>
+          <div class="col-md-2" style="background-color: #FFE0B2;">0-<br>50k</div>
           <div class="col-md-2" style="background-color: #FFCC80;">50-100k</div>
           <div class="col-md-2" style="background-color: #FFA726;">100-150k</div>
           <div class="col-md-2" style="background-color: #FB8C00;">150-200k</div>
           <div class="col-md-2" style="background-color: #EF6C00;">200-250k</div>
           <div class="col-md-2" style="background-color: #E65100;">250-300k</div>
+
+          <div>
+            The node radius is proportional to the number of connected flows.
+          </div>
         </div>
 
       </div>
@@ -199,12 +210,12 @@
 
         from_date_cal = $( "#from_datepicker" ).datepicker( "getDate" );
         if ( from_date_cal != null) {
-          current_from_date = from_date_cal; 
+          current_from_date = from_date_cal;
         }
 
         to_date_cal = $( "#to_datepicker" ).datepicker( "getDate" );
         if ( to_date_cal != null) {
-          current_from_date = to_date_cal; 
+          current_from_date = to_date_cal;
         }
 
         is_directed;

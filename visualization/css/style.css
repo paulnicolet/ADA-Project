@@ -1,5 +1,5 @@
 body {
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Helvetica Neue';
 }
 
 h1 {
@@ -17,7 +17,7 @@ h1 {
 }
 
 .variable-name {
-	font-family: 'Roboto', sans-serif;
+	font-family: 'Helvetica Neue';
 	font-size: 20px;
 }
 
@@ -36,4 +36,3 @@ h1 {
 #filling-row {
 	height: 700px;
 }
-
