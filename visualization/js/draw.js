@@ -198,7 +198,8 @@ function draw(geo_data, current_filename, current_nodes, current_from_date, curr
         if( (flow_start_date >= current_from_date) && (flow_end_date <= current_to_date) ) {
           return 0.6;
         } else {
-          return 0;
+          return 0.6;
+          //return 0;
         }
        })
        .attr("marker-end", function(flow) {
