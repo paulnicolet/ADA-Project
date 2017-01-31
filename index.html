@@ -136,8 +136,8 @@
 
     <script>
 
-      var current_filename = "/visualization/d3-files/flows_4_0_15000_2_False.json";
-      var current_nodes = "/visualization/d3-files/nodes_4_0_15000_2_False.json";
+      var current_filename = "/d3-files/flows_4_0_15000_2_False.json";
+      var current_nodes = "/d3-files/nodes_4_0_15000_2_False.json";
 
       var current_from_date = new Date("2016-09-10 00:00:00");
       var current_to_date = new Date("2016-09-30 00:00:00");
@@ -194,14 +194,14 @@
 
       function reload() {
 
-        current_filename = "/visualization/d3-files/flows_"
+        current_filename = "/d3-files/flows_"
                           + $("#slider_swiss_nodes_value").html() + "_" // swiss nodes
                           + $('#slider_foreign_nodes_value').html() + "_" // foreign nodes per country
                           + "15000" + "_" // foreign population
                           + $('#slider_time_interval_value').html() + "_" // detection interval
                           + $('#slider_directed_value').html() + ".json"; //directed
 
-        current_nodes = "/visualization/d3-files/nodes_"
+        current_nodes = "/d3-files/nodes_"
                           + $("#slider_swiss_nodes_value").html() + "_" // swiss nodes
                           + $('#slider_foreign_nodes_value').html() + "_" // foreign nodes per country
                           + "15000" + "_" // foreign population
