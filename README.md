@@ -4,6 +4,9 @@
 ### Goal
 The goal is to look for geographical people flows in Switzerland, from  a set of geolocalized tweets.
 
+### Report
+The description and reflection about the project is available [here](https://github.com/paulnicolet/ADA-Project/blob/master/report.pdf).
+
 ### Layout
 * `swiss_flows`: main project package containing all the modules.
 * `notebooks`: package containing the iPython notebooks used to develop the pipeline for each main feature, with detailed development insights. **Warning**: these notebooks may contain dirty code.
@@ -14,7 +17,6 @@ The goal is to look for geographical people flows in Switzerland, from  a set of
 
 ### Dependencies
 * `pandas`
-* `haversine`
 * `pickle`
 
 ### References
